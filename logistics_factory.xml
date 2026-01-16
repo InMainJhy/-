@@ -1,0 +1,947 @@
+<mujoco model="logistics_factory">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true" autolimits="true" />
+  <option timestep="0.002" integrator="implicitfast" gravity="0 0 -9.81" viscosity="0" />
+  <size njmax="2000" nconmax="400" />
+
+  <visual>
+    <global azimuth="135" elevation="-20" offwidth="1920" offheight="1080" />
+    <quality shadowsize="4096" />
+    <headlight ambient="0.25 0.25 0.25" diffuse="0.65 0.65 0.65" specular="0.15 0.15 0.15" />
+    <rgba haze="0.95 0.97 1 1" />
+  </visual>
+
+  <asset>
+    <texture name="tex_sky" type="skybox" builtin="gradient" rgb1="0.87 0.93 0.99" rgb2="0.35 0.45 0.55" width="512" height="512" />
+
+    <texture name="tex_concrete" type="2d" builtin="checker" rgb1="0.62 0.62 0.63" rgb2="0.58 0.58 0.59" width="2048" height="2048" />
+    <material name="mat_floor" texture="tex_concrete" texrepeat="6 6" reflectance="0.10" shininess="0.25" specular="0.18" rgba="0.92 0.92 0.92 1" />
+
+    <texture name="tex_wall_panels" type="2d" builtin="checker" rgb1="0.78 0.79 0.81" rgb2="0.74 0.75 0.77" width="1024" height="1024" />
+    <material name="mat_wall" texture="tex_wall_panels" texrepeat="3 2" reflectance="0.06" shininess="0.20" specular="0.10" rgba="0.95 0.96 0.98 1" />
+
+    <texture name="tex_steel_micro" type="2d" builtin="checker" rgb1="0.66 0.68 0.70" rgb2="0.60 0.62 0.64" width="1024" height="1024" />
+    <material name="mat_metal" texture="tex_steel_micro" texrepeat="18 6" reflectance="0.35" shininess="0.90" specular="0.55" rgba="0.92 0.94 0.96 1" />
+
+    <texture name="tex_painted_metal" type="2d" builtin="checker" rgb1="0.55 0.58 0.62" rgb2="0.50 0.53 0.56" width="1024" height="1024" />
+    <material name="mat_painted_metal" texture="tex_painted_metal" texrepeat="10 4" reflectance="0.18" shininess="0.55" specular="0.28" rgba="0.85 0.87 0.90 1" />
+
+    <texture name="tex_rubber" type="2d" builtin="flat" rgb1="0.08 0.08 0.09" width="256" height="256" />
+    <material name="mat_rubber" texture="tex_rubber" reflectance="0.02" shininess="0.12" specular="0.06" rgba="0.12 0.12 0.13 1" />
+
+    <texture name="tex_cardboard" type="2d" builtin="checker" rgb1="0.62 0.49 0.33" rgb2="0.58 0.45 0.30" width="1024" height="1024" />
+    <material name="mat_cardboard" texture="tex_cardboard" texrepeat="12 8" reflectance="0.02" shininess="0.12" specular="0.05" rgba="0.96 0.94 0.88 1" />
+
+    <material name="mat_label" rgba="0.97 0.97 0.97 1" reflectance="0.02" shininess="0.05" />
+    <material name="mat_glass" rgba="0.65 0.80 0.92 0.28" reflectance="0.35" shininess="0.95" />
+    <material name="mat_door" rgba="0.18 0.20 0.22 1" reflectance="0.08" shininess="0.35" />
+    <texture name="tex_paint_micro" type="2d" builtin="checker" rgb1="0.96 0.96 0.96" rgb2="0.90 0.90 0.90" width="1024" height="1024" />
+    <material name="mat_forklift_yellow" texture="tex_paint_micro" texrepeat="14 7" rgba="0.96 0.78 0.10 1" reflectance="0.10" shininess="0.65" specular="0.35" />
+    <material name="mat_plastic_black" rgba="0.08 0.09 0.10 1" reflectance="0.03" shininess="0.22" specular="0.08" />
+    <material name="mat_tire" rgba="0.06 0.06 0.065 1" reflectance="0.02" shininess="0.16" specular="0.06" />
+
+    <texture name="tex_yellow_box" type="2d" builtin="checker" rgb1="0.98 0.98 0.98" rgb2="0.90 0.90 0.90" width="1024" height="1024" />
+    <material name="mat_yellow_box" texture="tex_yellow_box" texrepeat="10 6" rgba="0.95 0.86 0.30 1" reflectance="0.02" shininess="0.14" specular="0.05" />
+
+    <texture name="tex_wood" type="2d" builtin="checker" rgb1="0.62 0.46 0.30" rgb2="0.55 0.40 0.26" width="1024" height="1024" />
+    <material name="mat_wood" texture="tex_wood" texrepeat="14 3" rgba="0.55 0.40 0.26 1" reflectance="0.03" shininess="0.10" specular="0.06" />
+
+    <material name="mat_robot_blue" texture="tex_paint_micro" texrepeat="10 5" rgba="0.12 0.38 0.78 1" reflectance="0.10" shininess="0.70" specular="0.40" />
+
+    <material name="mat_rack_blue" texture="tex_painted_metal" texrepeat="12 4" rgba="0.12 0.22 0.55 1" reflectance="0.12" shininess="0.55" specular="0.25" />
+    <material name="mat_rack_orange" texture="tex_painted_metal" texrepeat="12 4" rgba="0.90 0.35 0.06 1" reflectance="0.12" shininess="0.55" specular="0.25" />
+    <material name="mat_safety_yellow" rgba="0.96 0.86 0.12 1" reflectance="0.06" shininess="0.35" specular="0.18" />
+    <material name="mat_safety_red" rgba="0.78 0.12 0.10 1" reflectance="0.06" shininess="0.35" specular="0.18" />
+    <material name="mat_marker_white" rgba="0.96 0.96 0.96 0.55" reflectance="0.02" shininess="0.08" specular="0.02" />
+    <material name="mat_marker_yellow" rgba="0.95 0.86 0.15 0.60" reflectance="0.02" shininess="0.10" specular="0.04" />
+    <material name="mat_led" rgba="0.96 0.98 1 1" reflectance="0.12" shininess="0.95" specular="0.85" />
+    <material name="mat_truck_white" rgba="0.95 0.95 0.95 1" reflectance="0.3" shininess="0.5" specular="0.5" />
+  </asset>
+
+  <default>
+    <joint damping="0.8" armature="0.0005" />
+    <geom contype="1" conaffinity="1" condim="4" solref="0.01 1" solimp="0.9 0.95 0.001" />
+
+    <default class="frame">
+      <geom material="mat_metal" friction="0.8 0.02 0.01" density="7800" />
+    </default>
+
+    <default class="roller">
+      <joint type="hinge" axis="0 1 0" limited="false" damping="0.08" armature="0.002" />
+      <geom type="cylinder" material="mat_rubber" friction="2.0 0.02 0.005" density="1100" quat="0.7071068 0.7071068 0 0" />
+    </default>
+
+    <default class="package">
+      <joint type="free" />
+      <geom type="box" material="mat_cardboard" friction="1.2 0.02 0.002" density="350" />
+    </default>
+
+    <default class="yellow_package">
+      <joint type="free" />
+      <geom type="box" material="mat_yellow_box" friction="1.1 0.02 0.002" density="320" />
+    </default>
+  </default>
+
+  <worldbody>
+    <light name="key" pos="2.5 -2.5 3.8" dir="-0.7 0.7 -1" directional="true" diffuse="0.95 0.95 0.95" specular="0.15 0.15 0.15" castshadow="true" />
+    <light name="fill" pos="-3 2 3" dir="0.7 -0.3 -1" directional="true" diffuse="0.45 0.45 0.5" specular="0.05 0.05 0.06" castshadow="false" />
+
+    <camera name="overview" pos="2.2 -2.2 1.45" xyaxes="0.707 0.707 0  -0.25 0.25 0.935" />
+    <camera name="conveyor" pos="0.65 -0.85 0.65" xyaxes="1 0 0  0 0.55 0.835" />
+
+    <geom name="floor" type="plane" size="10 10 0.1" material="mat_floor" friction="1.0 0.02 0.005" />
+
+    <body name="warehouse" pos="0 0 0">
+      <geom name="slab" type="box" size="4.2 7.7 0.06" pos="0 2.5 0.06" material="mat_floor" friction="1.2 0.02 0.005" />
+
+      <geom name="wall_back" type="box" size="4.0 0.08 1.30" pos="0 10.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="wall_left" type="box" size="0.08 7.5 1.30" pos="-4.0 2.5 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <!-- Wall removed as per request -->
+      <geom name="wall_right_north" type="box" size="0.08 4.65 1.30" pos="4.0 5.35 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="wall_right_south" type="box" size="0.08 2.15 1.30" pos="4.0 -2.85 1.30" material="mat_wall" friction="1 0.02 0.005" />
+
+      <geom name="front_left" type="box" size="1.45 0.08 1.30" pos="-2.55 -5.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="front_right" type="box" size="1.45 0.08 1.30" pos="2.55 -5.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="front_lintel" type="box" size="1.10 0.08 0.20" pos="0 -5.0 2.40" material="mat_wall" friction="1 0.02 0.005" />
+
+      <geom name="loading_door_panel" type="box" size="1.08 0.02 0.30" pos="0 -4.92 2.12" material="mat_door" contype="0" conaffinity="0" />
+      <geom name="loading_door_frame_left" type="box" size="0.06 0.03 1.10" pos="-1.16 -4.95 1.10" material="mat_painted_metal" />
+      <geom name="loading_door_frame_right" type="box" size="0.06 0.03 1.10" pos="1.16 -4.95 1.10" material="mat_painted_metal" />
+      <geom name="loading_door_frame_top" type="box" size="1.18 0.03 0.06" pos="0 -4.95 2.20" material="mat_painted_metal" />
+
+      <geom name="window_left_1" type="box" size="0.005 0.65 0.35" pos="-3.91 -1.2 1.70" material="mat_glass" contype="0" conaffinity="0" />
+      <geom name="window_left_2" type="box" size="0.005 0.65 0.35" pos="-3.91 1.2 1.70" material="mat_glass" contype="0" conaffinity="0" />
+      <geom name="window_right_1" type="box" size="0.005 0.65 0.35" pos="3.91 -1.2 1.70" material="mat_glass" contype="0" conaffinity="0" />
+      <geom name="window_right_2" type="box" size="0.005 0.65 0.35" pos="3.91 1.2 1.70" material="mat_glass" contype="0" conaffinity="0" />
+      <geom name="window_back_1" type="box" size="0.65 0.005 0.35" pos="-1.6 9.91 1.70" material="mat_glass" contype="0" conaffinity="0" />
+      <geom name="window_back_2" type="box" size="0.65 0.005 0.35" pos="1.6 9.91 1.70" material="mat_glass" contype="0" conaffinity="0" />
+
+      <light name="led_w1_01" pos="-2.6 -1.6 3.2" directional="false" diffuse="0.95 0.95 0.95" specular="0.15 0.15 0.15" attenuation="0 0 0.20" />
+      <light name="led_w1_02" pos="2.6 -1.6 3.2" directional="false" diffuse="0.95 0.95 0.95" specular="0.15 0.15 0.15" attenuation="0 0 0.20" />
+      <light name="led_w1_03" pos="-2.6 8.6 3.2" directional="false" diffuse="0.90 0.90 0.92" specular="0.12 0.12 0.12" attenuation="0 0 0.22" />
+      <light name="led_w1_04" pos="2.6 8.6 3.2" directional="false" diffuse="0.90 0.90 0.92" specular="0.12 0.12 0.12" attenuation="0 0 0.22" />
+
+      <geom name="w1_mark_main_aisle" type="box" size="3.75 0.02 0.001" pos="0 0 0.121" material="mat_marker_yellow" contype="0" conaffinity="0" />
+      <geom name="w1_mark_receiving" type="box" size="1.85 1.05 0.001" pos="0 -3.65 0.121" material="mat_marker_white" contype="0" conaffinity="0" />
+      <geom name="w1_mark_qc" type="box" size="0.75 0.55 0.001" pos="2.7 -4.05 0.121" material="mat_marker_white" contype="0" conaffinity="0" />
+      <geom name="w1_mark_packing" type="box" size="0.75 0.55 0.001" pos="-2.7 -4.05 0.121" material="mat_marker_white" contype="0" conaffinity="0" />
+
+      <body name="w1_heavy_rack_01" pos="-3.10 0.75 0">
+        <geom name="w1_hr1_post_fl" type="box" size="0.04 0.04 1.40" pos="0.52 1.55 1.40" material="mat_rack_blue" density="7800" />
+        <geom name="w1_hr1_post_fr" type="box" size="0.04 0.04 1.40" pos="0.52 -1.55 1.40" material="mat_rack_blue" density="7800" />
+        <geom name="w1_hr1_post_bl" type="box" size="0.04 0.04 1.40" pos="-0.52 1.55 1.40" material="mat_rack_blue" density="7800" />
+        <geom name="w1_hr1_post_br" type="box" size="0.04 0.04 1.40" pos="-0.52 -1.55 1.40" material="mat_rack_blue" density="7800" />
+
+        <geom name="w1_hr1_beam_l1a" type="box" size="0.03 1.60 0.06" pos="0.52 0 0.45" material="mat_rack_orange" density="7800" />
+        <geom name="w1_hr1_beam_l1b" type="box" size="0.03 1.60 0.06" pos="-0.52 0 0.45" material="mat_rack_orange" density="7800" />
+        <geom name="w1_hr1_deck_l1" type="box" size="0.50 1.55 0.03" pos="0 0 0.54" material="mat_wood" density="650" />
+
+        <geom name="w1_hr1_beam_l2a" type="box" size="0.03 1.60 0.06" pos="0.52 0 1.15" material="mat_rack_orange" density="7800" />
+        <geom name="w1_hr1_beam_l2b" type="box" size="0.03 1.60 0.06" pos="-0.52 0 1.15" material="mat_rack_orange" density="7800" />
+        <geom name="w1_hr1_deck_l2" type="box" size="0.50 1.55 0.03" pos="0 0 1.24" material="mat_wood" density="650" />
+
+        <geom name="w1_hr1_beam_l3a" type="box" size="0.03 1.60 0.06" pos="0.52 0 1.85" material="mat_rack_orange" density="7800" />
+        <geom name="w1_hr1_beam_l3b" type="box" size="0.03 1.60 0.06" pos="-0.52 0 1.85" material="mat_rack_orange" density="7800" />
+        <geom name="w1_hr1_deck_l3" type="box" size="0.50 1.55 0.03" pos="0 0 1.94" material="mat_wood" density="650" />
+
+        <geom name="w1_hr1_load_01" type="box" size="0.45 0.55 0.20" pos="0 0.65 0.78" material="mat_cardboard" density="250" />
+        <geom name="w1_hr1_load_02" type="box" size="0.45 0.55 0.20" pos="0 -0.65 0.78" material="mat_cardboard" density="250" />
+        <geom name="w1_hr1_load_03" type="box" size="0.45 0.55 0.20" pos="0 0.65 1.48" material="mat_cardboard" density="250" />
+        <geom name="w1_hr1_load_04" type="box" size="0.45 0.55 0.20" pos="0 -0.65 1.48" material="mat_cardboard" density="250" />
+      </body>
+
+      <body name="w1_flow_rack_01" pos="3.10 0.95 0">
+        <geom name="w1_fr1_post_fl" type="box" size="0.04 0.04 1.20" pos="0.45 1.15 1.20" material="mat_rack_blue" density="7800" />
+        <geom name="w1_fr1_post_fr" type="box" size="0.04 0.04 1.20" pos="0.45 -1.15 1.20" material="mat_rack_blue" density="7800" />
+        <geom name="w1_fr1_post_bl" type="box" size="0.04 0.04 1.20" pos="-0.45 1.15 1.20" material="mat_rack_blue" density="7800" />
+        <geom name="w1_fr1_post_br" type="box" size="0.04 0.04 1.20" pos="-0.45 -1.15 1.20" material="mat_rack_blue" density="7800" />
+
+        <geom name="w1_fr1_beam_l1a" type="box" size="0.03 1.20 0.05" pos="0.45 0 0.40" material="mat_rack_orange" density="7800" />
+        <geom name="w1_fr1_beam_l1b" type="box" size="0.03 1.20 0.05" pos="-0.45 0 0.40" material="mat_rack_orange" density="7800" />
+        <geom name="w1_fr1_tray_1" type="box" size="0.42 1.15 0.02" pos="0 0 0.52" material="mat_metal" density="7800" quat="0.9986295 0 -0.0523360 0" />
+
+        <geom name="w1_fr1_beam_l2a" type="box" size="0.03 1.20 0.05" pos="0.45 0 0.95" material="mat_rack_orange" density="7800" />
+        <geom name="w1_fr1_beam_l2b" type="box" size="0.03 1.20 0.05" pos="-0.45 0 0.95" material="mat_rack_orange" density="7800" />
+        <geom name="w1_fr1_tray_2" type="box" size="0.42 1.15 0.02" pos="0 0 1.07" material="mat_metal" density="7800" quat="0.9986295 0 -0.0523360 0" />
+
+        <geom name="w1_fr1_roller_01" type="cylinder" size="0.02 0.46" pos="0.20 0 0.56" quat="0.7071068 0.7071068 0 0" material="mat_rubber" density="1100" />
+        <geom name="w1_fr1_roller_02" type="cylinder" size="0.02 0.46" pos="-0.20 0 0.56" quat="0.7071068 0.7071068 0 0" material="mat_rubber" density="1100" />
+        <geom name="w1_fr1_roller_03" type="cylinder" size="0.02 0.46" pos="0.20 0 1.11" quat="0.7071068 0.7071068 0 0" material="mat_rubber" density="1100" />
+        <geom name="w1_fr1_roller_04" type="cylinder" size="0.02 0.46" pos="-0.20 0 1.11" quat="0.7071068 0.7071068 0 0" material="mat_rubber" density="1100" />
+      </body>
+
+      <body name="w1_mezz_rack_01" pos="0 2.10 0">
+        <geom name="w1_mz_post_1" type="box" size="0.06 0.06 1.60" pos="-1.60 -0.70 1.60" material="mat_painted_metal" density="7800" />
+        <geom name="w1_mz_post_2" type="box" size="0.06 0.06 1.60" pos="1.60 -0.70 1.60" material="mat_painted_metal" density="7800" />
+        <geom name="w1_mz_post_3" type="box" size="0.06 0.06 1.60" pos="-1.60 0.70 1.60" material="mat_painted_metal" density="7800" />
+        <geom name="w1_mz_post_4" type="box" size="0.06 0.06 1.60" pos="1.60 0.70 1.60" material="mat_painted_metal" density="7800" />
+
+        <geom name="w1_mz_deck" type="box" size="1.70 0.80 0.06" pos="0 0 1.68" material="mat_wood" density="650" />
+        <geom name="w1_mz_guard_1" type="box" size="1.70 0.03 0.04" pos="0 0.77 1.95" material="mat_safety_yellow" density="1200" contype="0" conaffinity="0" />
+        <geom name="w1_mz_guard_2" type="box" size="1.70 0.03 0.04" pos="0 -0.77 1.95" material="mat_safety_yellow" density="1200" contype="0" conaffinity="0" />
+        <geom name="w1_mz_guard_3" type="box" size="0.03 0.80 0.04" pos="1.67 0 1.95" material="mat_safety_yellow" density="1200" contype="0" conaffinity="0" />
+        <geom name="w1_mz_guard_4" type="box" size="0.03 0.80 0.04" pos="-1.67 0 1.95" material="mat_safety_yellow" density="1200" contype="0" conaffinity="0" />
+
+        <geom name="w1_mz_stair_stringer" type="box" size="0.08 0.55 0.03" pos="-1.90 -1.20 0.60" material="mat_painted_metal" density="7800" quat="0.9659258 0 0.2588190 0" />
+        <geom name="w1_mz_stair_steps" type="box" size="0.45 0.55 0.02" pos="-1.70 -1.20 0.60" material="mat_wood" density="650" quat="0.9659258 0 0.2588190 0" />
+
+        <geom name="w1_mz_box_01" type="box" size="0.20 0.14 0.10" pos="-0.50 0.10 1.82" material="mat_cardboard" density="250" />
+        <geom name="w1_mz_box_02" type="box" size="0.22 0.16 0.11" pos="0.10 -0.20 1.83" material="mat_cardboard" density="250" />
+        <geom name="w1_mz_box_03" type="box" size="0.18 0.12 0.09" pos="0.55 0.25 1.80" material="mat_cardboard" density="250" />
+      </body>
+
+      <body name="w1_qc_station" pos="2.70 -4.05 0">
+        <geom name="w1_qc_table_top" type="box" size="0.55 0.30 0.04" pos="0 0 0.86" material="mat_painted_metal" density="7800" />
+        <geom name="w1_qc_table_leg_1" type="box" size="0.03 0.03 0.43" pos="0.50 0.25 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_qc_table_leg_2" type="box" size="0.03 0.03 0.43" pos="0.50 -0.25 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_qc_table_leg_3" type="box" size="0.03 0.03 0.43" pos="-0.50 0.25 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_qc_table_leg_4" type="box" size="0.03 0.03 0.43" pos="-0.50 -0.25 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_qc_tool_cabinet" type="box" size="0.25 0.30 0.50" pos="0.85 0 0.50" material="mat_painted_metal" density="7800" />
+        <geom name="w1_qc_tools" type="box" size="0.08 0.06 0.02" pos="0.10 0.10 0.92" material="mat_metal" density="7800" contype="0" conaffinity="0" />
+      </body>
+
+      <body name="w1_packing_station" pos="-2.70 -4.05 0">
+        <geom name="w1_pack_table_top" type="box" size="0.60 0.32 0.04" pos="0 0 0.86" material="mat_painted_metal" density="7800" />
+        <geom name="w1_pack_table_leg_1" type="box" size="0.03 0.03 0.43" pos="0.55 0.27 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_pack_table_leg_2" type="box" size="0.03 0.03 0.43" pos="0.55 -0.27 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_pack_table_leg_3" type="box" size="0.03 0.03 0.43" pos="-0.55 0.27 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_pack_table_leg_4" type="box" size="0.03 0.03 0.43" pos="-0.55 -0.27 0.43" material="mat_metal" density="7800" />
+        <geom name="w1_pack_material_rack" type="box" size="0.25 0.55 0.90" pos="0.95 0 0.90" material="mat_rack_blue" density="7800" />
+        <geom name="w1_pack_roll_1" type="cylinder" size="0.06 0.12" pos="0.10 0.10 0.92" quat="0.7071068 0.7071068 0 0" material="mat_cardboard" density="250" contype="0" conaffinity="0" />
+      </body>
+
+      <geom name="w1_extinguisher_01" type="cylinder" size="0.05 0.20" pos="-3.75 -4.70 0.32" material="mat_safety_red" density="1200" contype="0" conaffinity="0" />
+      <geom name="w1_extinguisher_02" type="cylinder" size="0.05 0.20" pos="3.75 -4.70 0.32" material="mat_safety_red" density="1200" contype="0" conaffinity="0" />
+      <geom name="w1_emergency_light_01" type="box" size="0.12 0.04 0.04" pos="-0.90 -4.93 2.15" material="mat_led" contype="0" conaffinity="0" />
+      <geom name="w1_emergency_light_02" type="box" size="0.12 0.04 0.04" pos="0.90 -4.93 2.15" material="mat_led" contype="0" conaffinity="0" />
+
+      <geom name="w1_bollard_01" type="cylinder" size="0.10 0.35" pos="-2.10 -4.70 0.35" material="mat_safety_yellow" density="1200" />
+      <geom name="w1_bollard_02" type="cylinder" size="0.10 0.35" pos="2.10 -4.70 0.35" material="mat_safety_yellow" density="1200" />
+      <geom name="w1_bollard_03" type="cylinder" size="0.10 0.35" pos="-3.55 -0.90 0.35" material="mat_safety_yellow" density="1200" />
+      <geom name="w1_bollard_04" type="cylinder" size="0.10 0.35" pos="-3.55 2.10 0.35" material="mat_safety_yellow" density="1200" />
+      <geom name="w1_bollard_05" type="cylinder" size="0.10 0.35" pos="3.55 -0.90 0.35" material="mat_safety_yellow" density="1200" />
+      <geom name="w1_bollard_06" type="cylinder" size="0.10 0.35" pos="3.55 2.10 0.35" material="mat_safety_yellow" density="1200" />
+
+      <geom name="w1_guardrail_1" type="box" size="0.06 1.20 0.05" pos="-1.45 -0.10 0.50" material="mat_painted_metal" density="7800" />
+      <geom name="w1_guardrail_2" type="box" size="0.06 1.20 0.05" pos="1.45 -0.10 0.50" material="mat_painted_metal" density="7800" />
+    </body>
+
+    <body name="corridor" pos="6 0 0">
+      <geom name="corridor_slab" type="box" size="2.05 0.95 0.06" pos="0 0 0.06" material="mat_floor" friction="1.2 0.02 0.005" />
+      <geom name="corridor_wall_north" type="box" size="2.00 0.08 1.30" pos="0 1.03 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="corridor_wall_south" type="box" size="2.00 0.08 1.30" pos="0 -1.03 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="corridor_frame_west" type="box" size="0.06 1.00 1.35" pos="-2.00 0 1.35" material="mat_painted_metal" contype="0" conaffinity="0" />
+      <!-- East frame removed as per request -->
+    </body>
+
+    <body name="warehouse2" pos="12 0 0">
+      <geom name="slab_2" type="box" size="4.2 3.2 0.06" pos="0 0 0.06" material="mat_floor" friction="1.2 0.02 0.005" />
+
+      <!-- Wall removed as per request -->
+      <geom name="wall2_back" type="box" size="4.0 0.08 1.30" pos="0 3.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="front2_left" type="box" size="1.45 0.08 1.30" pos="-2.55 -3.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="front2_right" type="box" size="1.45 0.08 1.30" pos="2.55 -3.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="front2_lintel" type="box" size="1.10 0.08 0.20" pos="0 -3.0 2.40" material="mat_wall" friction="1 0.02 0.005" />
+
+      <geom name="loading_door2_panel" type="box" size="1.08 0.02 0.30" pos="0 -2.92 2.12" material="mat_door" contype="0" conaffinity="0" />
+      <geom name="loading_door2_frame_left" type="box" size="0.06 0.03 1.10" pos="-1.16 -2.95 1.10" material="mat_painted_metal" />
+      <geom name="loading_door2_frame_right" type="box" size="0.06 0.03 1.10" pos="1.16 -2.95 1.10" material="mat_painted_metal" />
+      <geom name="loading_door2_frame_top" type="box" size="1.18 0.03 0.06" pos="0 -2.95 2.20" material="mat_painted_metal" />
+
+      <geom name="wall2_right" type="box" size="0.08 3.0 1.30" pos="4.0 0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <!-- Wall removed as per request -->
+      <geom name="wall2_left_north" type="box" size="0.08 1.15 1.30" pos="-4.0 1.85 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="wall2_left_south" type="box" size="0.08 1.15 1.30" pos="-4.0 -1.85 1.30" material="mat_wall" friction="1 0.02 0.005" />
+
+      <body name="rack_01" pos="-1.6 1.95 0" quat="0.7071068 0 0 0.7071068">
+        <geom name="rack_01_upright_fl" type="box" size="0.04 0.04 1.20" pos="-0.02 0.02 1.20" material="mat_rack_blue" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_upright_fr" type="box" size="0.04 0.04 1.20" pos="-0.02 2.58 1.20" material="mat_rack_blue" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_upright_bl" type="box" size="0.04 0.04 1.20" pos="-0.56 0.02 1.20" material="mat_rack_blue" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_upright_br" type="box" size="0.04 0.04 1.20" pos="-0.56 2.58 1.20" material="mat_rack_blue" density="7800" contype="1" conaffinity="1" />
+
+        <geom name="rack_01_beam_1a" type="box" size="0.03 1.30 0.05" pos="-0.02 1.30 0.40" material="mat_rack_orange" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_beam_1b" type="box" size="0.03 1.30 0.05" pos="-0.56 1.30 0.40" material="mat_rack_orange" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_deck_1" type="box" size="0.25 1.25 0.02" pos="-0.29 1.30 0.48" material="mat_wood" density="650" contype="1" conaffinity="1" />
+
+        <geom name="rack_01_beam_2a" type="box" size="0.03 1.30 0.05" pos="-0.02 1.30 1.10" material="mat_rack_orange" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_beam_2b" type="box" size="0.03 1.30 0.05" pos="-0.56 1.30 1.10" material="mat_rack_orange" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_deck_2" type="box" size="0.25 1.25 0.02" pos="-0.29 1.30 1.18" material="mat_wood" density="650" contype="1" conaffinity="1" />
+
+        <geom name="rack_01_beam_3a" type="box" size="0.03 1.30 0.05" pos="-0.02 1.30 1.80" material="mat_rack_orange" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_beam_3b" type="box" size="0.03 1.30 0.05" pos="-0.56 1.30 1.80" material="mat_rack_orange" density="7800" contype="1" conaffinity="1" />
+        <geom name="rack_01_deck_3" type="box" size="0.25 1.25 0.02" pos="-0.29 1.30 1.88" material="mat_wood" density="650" contype="1" conaffinity="1" />
+      </body>
+
+      <!-- Rack 02 removed as per request -->
+    </body>
+
+    <body name="robot_arm" pos="-0.30 1.05 0.00" quat="0.7071068 0 0 -0.7071068">
+      <geom name="robot_base_plate" type="cylinder" size="0.28 0.04" pos="0 0 0.04" material="mat_painted_metal" density="7800" friction="1.2 0.02 0.005" />
+      <geom name="robot_pedestal" type="cylinder" size="0.18 0.26" pos="0 0 0.30" material="mat_painted_metal" density="7800" friction="1.2 0.02 0.005" />
+
+      <body name="arm_1" pos="0 0 0.56">
+        <joint name="j_arm_1" type="hinge" axis="0 0 1" range="-180 180" damping="4" armature="0.02" />
+        <geom name="arm_1_link" type="capsule" fromto="0 0 0  0.26 0 0" size="0.09" material="mat_robot_blue" density="1200" friction="1.0 0.02 0.005" />
+        <geom name="arm_1_shoulder" type="sphere" size="0.10" pos="0 0 0" material="mat_robot_blue" density="1200" contype="0" conaffinity="0" />
+
+        <body name="arm_2" pos="0.26 0 0">
+          <joint name="j_arm_2" type="hinge" axis="0 1 0" range="-110 110" damping="3.5" armature="0.02" />
+          <geom name="arm_2_link" type="capsule" fromto="0 0 0  0.34 0 0.16" size="0.075" material="mat_robot_blue" density="1200" friction="1.0 0.02 0.005" />
+
+          <body name="arm_3" pos="0.34 0 0.16">
+            <joint name="j_arm_3" type="hinge" axis="0 1 0" range="-150 150" damping="3.0" armature="0.015" />
+            <geom name="arm_3_link" type="capsule" fromto="0 0 0  0.30 0 0.05" size="0.065" material="mat_robot_blue" density="1200" friction="1.0 0.02 0.005" />
+
+            <body name="arm_4" pos="0.30 0 0.05">
+              <joint name="j_arm_4" type="hinge" axis="1 0 0" range="-180 180" damping="2.0" armature="0.01" />
+              <geom name="arm_4_link" type="capsule" fromto="0 0 0  0.18 0 0" size="0.055" material="mat_robot_blue" density="1200" friction="1.0 0.02 0.005" />
+
+              <body name="arm_5" pos="0.18 0 0">
+                <joint name="j_arm_5" type="hinge" axis="0 1 0" range="-120 120" damping="1.6" armature="0.008" />
+                <geom name="arm_5_link" type="capsule" fromto="0 0 0  0.14 0 0" size="0.048" material="mat_robot_blue" density="1200" friction="1.0 0.02 0.005" />
+
+                <body name="arm_6" pos="0.14 0 0">
+                  <joint name="j_arm_6" type="hinge" axis="1 0 0" range="-180 180" damping="1.2" armature="0.006" />
+                  <geom name="arm_6_link" type="capsule" fromto="0 0 0  0.10 0 0" size="0.043" material="mat_robot_blue" density="1200" friction="1.0 0.02 0.005" />
+
+                  <body name="gripper" pos="0.10 0 0">
+                    <geom name="gripper_base" type="box" size="0.05 0.07 0.045" pos="0.05 0 0" material="mat_metal" density="7800" friction="1.4 0.02 0.005" />
+                    <geom name="gripper_mount" type="cylinder" size="0.03 0.03" pos="0 0 0" quat="0.7071068 0 0.7071068 0" material="mat_metal" density="7800" contype="0" conaffinity="0" />
+
+                    <body name="finger_left" pos="0.09 0.055 0">
+                      <joint name="j_grip_left" type="slide" axis="0 -1 0" range="0 0.05" damping="5" armature="0.002" />
+                      <geom name="finger_left_geom" type="box" size="0.025 0.010 0.065" pos="0 0 0" material="mat_metal" density="7800" friction="2.4 0.02 0.005" />
+                      <geom name="finger_left_pad" type="box" size="0.018 0.004 0.030" pos="0.018 -0.010 0" material="mat_rubber" density="1100" friction="3.0 0.02 0.005" />
+                    </body>
+                    <body name="finger_right" pos="0.09 -0.055 0">
+                      <joint name="j_grip_right" type="slide" axis="0 1 0" range="0 0.05" damping="5" armature="0.002" />
+                      <geom name="finger_right_geom" type="box" size="0.025 0.010 0.065" pos="0 0 0" material="mat_metal" density="7800" friction="2.4 0.02 0.005" />
+                      <geom name="finger_right_pad" type="box" size="0.018 0.004 0.030" pos="0.018 0.010 0" material="mat_rubber" density="1100" friction="3.0 0.02 0.005" />
+                    </body>
+
+                    <body name="arm_ee" pos="0.15 0 0">
+                      <geom name="ee_marker" type="sphere" size="0.012" rgba="0.9 0.2 0.2 0.45" contype="0" conaffinity="0" />
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="conveyor" pos="0 0 0">
+      <geom name="conveyor_base" type="box" pos="0 0 0.18" size="1.1 0.45 0.06" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+      <geom name="conveyor_deck" type="box" pos="0 0 0.27" size="1.1 0.45 0.01" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+
+      <geom name="rail_left" type="box" pos="0 0.42 0.36" size="1.1 0.02 0.09" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+      <geom name="rail_right" type="box" pos="0 -0.42 0.36" size="1.1 0.02 0.09" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+
+      <geom name="leg_1" type="box" pos="-0.95 0.35 0.10" size="0.05 0.05 0.10" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+      <geom name="leg_2" type="box" pos="-0.95 -0.35 0.10" size="0.05 0.05 0.10" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+      <geom name="leg_3" type="box" pos="0.95 0.35 0.10" size="0.05 0.05 0.10" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+      <geom name="leg_4" type="box" pos="0.95 -0.35 0.10" size="0.05 0.05 0.10" material="mat_painted_metal" density="7800" friction="0.8 0.02 0.01" />
+
+      <body name="rollers" pos="0 0 0.30">
+        <body name="roller_01" pos="-0.95 0 0">
+          <joint class="roller" name="j_roller_01" />
+          <geom class="roller" name="g_roller_01" size="0.035 0.40" />
+        </body>
+        <body name="roller_02" pos="-0.80 0 0">
+          <joint class="roller" name="j_roller_02" />
+          <geom class="roller" name="g_roller_02" size="0.035 0.40" />
+        </body>
+        <body name="roller_03" pos="-0.65 0 0">
+          <joint class="roller" name="j_roller_03" />
+          <geom class="roller" name="g_roller_03" size="0.035 0.40" />
+        </body>
+        <body name="roller_04" pos="-0.50 0 0">
+          <joint class="roller" name="j_roller_04" />
+          <geom class="roller" name="g_roller_04" size="0.035 0.40" />
+        </body>
+        <body name="roller_05" pos="-0.35 0 0">
+          <joint class="roller" name="j_roller_05" />
+          <geom class="roller" name="g_roller_05" size="0.035 0.40" />
+        </body>
+        <body name="roller_06" pos="-0.20 0 0">
+          <joint class="roller" name="j_roller_06" />
+          <geom class="roller" name="g_roller_06" size="0.035 0.40" />
+        </body>
+        <body name="roller_07" pos="-0.05 0 0">
+          <joint class="roller" name="j_roller_07" />
+          <geom class="roller" name="g_roller_07" size="0.035 0.40" />
+        </body>
+        <body name="roller_08" pos="0.10 0 0">
+          <joint class="roller" name="j_roller_08" />
+          <geom class="roller" name="g_roller_08" size="0.035 0.40" />
+        </body>
+        <body name="roller_09" pos="0.25 0 0">
+          <joint class="roller" name="j_roller_09" />
+          <geom class="roller" name="g_roller_09" size="0.035 0.40" />
+        </body>
+        <body name="roller_10" pos="0.40 0 0">
+          <joint class="roller" name="j_roller_10" />
+          <geom class="roller" name="g_roller_10" size="0.035 0.40" />
+        </body>
+        <body name="roller_11" pos="0.55 0 0">
+          <joint class="roller" name="j_roller_11" />
+          <geom class="roller" name="g_roller_11" size="0.035 0.40" />
+        </body>
+        <body name="roller_12" pos="0.70 0 0">
+          <joint class="roller" name="j_roller_12" />
+          <geom class="roller" name="g_roller_12" size="0.035 0.40" />
+        </body>
+        <body name="roller_13" pos="0.85 0 0">
+          <joint class="roller" name="j_roller_13" />
+          <geom class="roller" name="g_roller_13" size="0.035 0.40" />
+        </body>
+        <body name="roller_14" pos="1.00 0 0">
+          <joint class="roller" name="j_roller_14" />
+          <geom class="roller" name="g_roller_14" size="0.035 0.40" />
+        </body>
+      </body>
+    </body>
+
+    <body name="box_A" pos="-0.65 0.08 0.48">
+      <joint class="package" />
+      <geom class="package" name="g_box_A" size="0.16 0.11 0.09" />
+      <geom name="label_A" type="box" size="0.06 0.001 0.03" pos="0 0.111 0.02" material="mat_label" contype="0" conaffinity="0" rgba="0.98 0.98 0.98 1" />
+    </body>
+    <body name="box_B" pos="-0.25 -0.06 0.48">
+      <joint class="package" />
+      <geom class="package" name="g_box_B" size="0.20 0.14 0.10" />
+      <geom name="label_B" type="box" size="0.07 0.001 0.035" pos="0 -0.141 0.02" material="mat_label" contype="0" conaffinity="0" rgba="0.98 0.98 0.98 1" />
+    </body>
+    <body name="box_C" pos="0.15 0.05 0.48">
+      <joint class="package" />
+      <geom class="package" name="g_box_C" size="0.14 0.10 0.07" />
+      <geom name="label_C" type="box" size="0.05 0.001 0.03" pos="0 0.101 0.015" material="mat_label" contype="0" conaffinity="0" rgba="0.98 0.98 0.98 1" />
+    </body>
+    <body name="box_D" pos="0.55 -0.03 0.48">
+      <joint class="package" />
+      <geom class="package" name="g_box_D" size="0.22 0.12 0.11" />
+      <geom name="label_D" type="box" size="0.07 0.001 0.035" pos="0 -0.121 0.03" material="mat_label" contype="0" conaffinity="0" rgba="0.98 0.98 0.98 1" />
+    </body>
+
+    <body name="forklift" pos="-2.0 -1.2 0.13">
+      <joint name="j_forklift" type="free" />
+      <geom name="forklift_chassis" type="box" size="0.55 0.32 0.16" pos="0 0 0.16" material="mat_forklift_yellow" density="1400" friction="1.0 0.02 0.005" />
+      <geom name="forklift_counterweight" type="box" size="0.30 0.30 0.22" pos="-0.45 0 0.22" material="mat_forklift_yellow" density="1600" />
+      <geom name="forklift_seat" type="box" size="0.18 0.18 0.10" pos="-0.05 0 0.42" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+      <geom name="forklift_steering" type="cylinder" size="0.10 0.01" pos="0.12 0.10 0.52" quat="0.9238795 0 0.3826834 0" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+
+      <geom name="forklift_mast" type="box" size="0.06 0.22 0.75" pos="0.58 0 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift_mast_inner" type="box" size="0.03 0.18 0.55" pos="0.64 0 0.75" material="mat_metal" density="7800" />
+      <geom name="forklift_backrest" type="box" size="0.02 0.25 0.40" pos="0.40 0 0.60" material="mat_metal" density="7800" />
+
+      <geom name="forklift_fork_left" type="box" size="0.45 0.06 0.02" pos="1.05 0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift_fork_right" type="box" size="0.45 0.06 0.02" pos="1.05 -0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift_fork_shaft" type="box" size="0.12 0.22 0.03" pos="0.70 0 0.10" material="mat_metal" density="7800" />
+
+      <geom name="forklift_wheel_fl" type="cylinder" size="0.13 0.06" pos="0.25 0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift_wheel_fr" type="cylinder" size="0.13 0.06" pos="0.25 -0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift_wheel_rl" type="cylinder" size="0.11 0.05" pos="-0.55 0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift_wheel_rr" type="cylinder" size="0.11 0.05" pos="-0.55 -0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+
+      <geom name="forklift_guard_left" type="box" size="0.02 0.02 0.55" pos="-0.10 0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift_guard_right" type="box" size="0.02 0.02 0.55" pos="-0.10 -0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift_guard_top" type="box" size="0.30 0.32 0.02" pos="-0.10 0 1.40" material="mat_metal" density="7800" />
+    </body>
+
+    <body name="forklift_02" pos="-2.6 -0.4 0.13">
+      <joint name="j_forklift_02" type="free" />
+      <geom name="forklift2_chassis" type="box" size="0.55 0.32 0.16" pos="0 0 0.16" material="mat_forklift_yellow" density="1400" friction="1.0 0.02 0.005" />
+      <geom name="forklift2_counterweight" type="box" size="0.30 0.30 0.22" pos="-0.45 0 0.22" material="mat_forklift_yellow" density="1600" />
+      <geom name="forklift2_seat" type="box" size="0.18 0.18 0.10" pos="-0.05 0 0.42" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+      <geom name="forklift2_steering" type="cylinder" size="0.10 0.01" pos="0.12 0.10 0.52" quat="0.9238795 0 0.3826834 0" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+
+      <geom name="forklift2_mast" type="box" size="0.06 0.22 0.75" pos="0.58 0 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift2_mast_inner" type="box" size="0.03 0.18 0.55" pos="0.64 0 0.75" material="mat_metal" density="7800" />
+      <geom name="forklift2_backrest" type="box" size="0.02 0.25 0.40" pos="0.40 0 0.60" material="mat_metal" density="7800" />
+
+      <geom name="forklift2_fork_left" type="box" size="0.45 0.06 0.02" pos="1.05 0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift2_fork_right" type="box" size="0.45 0.06 0.02" pos="1.05 -0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift2_fork_shaft" type="box" size="0.12 0.22 0.03" pos="0.70 0 0.10" material="mat_metal" density="7800" />
+
+      <geom name="forklift2_wheel_fl" type="cylinder" size="0.13 0.06" pos="0.25 0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift2_wheel_fr" type="cylinder" size="0.13 0.06" pos="0.25 -0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift2_wheel_rl" type="cylinder" size="0.11 0.05" pos="-0.55 0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift2_wheel_rr" type="cylinder" size="0.11 0.05" pos="-0.55 -0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+
+      <geom name="forklift2_guard_left" type="box" size="0.02 0.02 0.55" pos="-0.10 0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift2_guard_right" type="box" size="0.02 0.02 0.55" pos="-0.10 -0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift2_guard_top" type="box" size="0.30 0.32 0.02" pos="-0.10 0 1.40" material="mat_metal" density="7800" />
+    </body>
+
+    <body name="forklift_03" pos="-1.3 -2.2 0.13">
+      <joint name="j_forklift_03" type="free" />
+      <geom name="forklift3_chassis" type="box" size="0.55 0.32 0.16" pos="0 0 0.16" material="mat_forklift_yellow" density="1400" friction="1.0 0.02 0.005" />
+      <geom name="forklift3_counterweight" type="box" size="0.30 0.30 0.22" pos="-0.45 0 0.22" material="mat_forklift_yellow" density="1600" />
+      <geom name="forklift3_seat" type="box" size="0.18 0.18 0.10" pos="-0.05 0 0.42" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+      <geom name="forklift3_steering" type="cylinder" size="0.10 0.01" pos="0.12 0.10 0.52" quat="0.9238795 0 0.3826834 0" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+
+      <geom name="forklift3_mast" type="box" size="0.06 0.22 0.75" pos="0.58 0 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift3_mast_inner" type="box" size="0.03 0.18 0.55" pos="0.64 0 0.75" material="mat_metal" density="7800" />
+      <geom name="forklift3_backrest" type="box" size="0.02 0.25 0.40" pos="0.40 0 0.60" material="mat_metal" density="7800" />
+
+      <geom name="forklift3_fork_left" type="box" size="0.45 0.06 0.02" pos="1.05 0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift3_fork_right" type="box" size="0.45 0.06 0.02" pos="1.05 -0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift3_fork_shaft" type="box" size="0.12 0.22 0.03" pos="0.70 0 0.10" material="mat_metal" density="7800" />
+
+      <geom name="forklift3_wheel_fl" type="cylinder" size="0.13 0.06" pos="0.25 0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift3_wheel_fr" type="cylinder" size="0.13 0.06" pos="0.25 -0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift3_wheel_rl" type="cylinder" size="0.11 0.05" pos="-0.55 0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift3_wheel_rr" type="cylinder" size="0.11 0.05" pos="-0.55 -0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+
+      <geom name="forklift3_guard_left" type="box" size="0.02 0.02 0.55" pos="-0.10 0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift3_guard_right" type="box" size="0.02 0.02 0.55" pos="-0.10 -0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift3_guard_top" type="box" size="0.30 0.32 0.02" pos="-0.10 0 1.40" material="mat_metal" density="7800" />
+    </body>
+
+    <body name="forklift_04" pos="2.6 -2.2 0.13">
+      <joint name="j_forklift_04" type="free" />
+      <geom name="forklift4_chassis" type="box" size="0.55 0.32 0.16" pos="0 0 0.16" material="mat_forklift_yellow" density="1400" friction="1.0 0.02 0.005" />
+      <geom name="forklift4_counterweight" type="box" size="0.30 0.30 0.22" pos="-0.45 0 0.22" material="mat_forklift_yellow" density="1600" />
+      <geom name="forklift4_seat" type="box" size="0.18 0.18 0.10" pos="-0.05 0 0.42" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+      <geom name="forklift4_steering" type="cylinder" size="0.10 0.01" pos="0.12 0.10 0.52" quat="0.9238795 0 0.3826834 0" material="mat_plastic_black" density="900" contype="0" conaffinity="0" />
+
+      <geom name="forklift4_mast" type="box" size="0.06 0.22 0.75" pos="0.58 0 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift4_mast_inner" type="box" size="0.03 0.18 0.55" pos="0.64 0 0.75" material="mat_metal" density="7800" />
+      <geom name="forklift4_backrest" type="box" size="0.02 0.25 0.40" pos="0.40 0 0.60" material="mat_metal" density="7800" />
+
+      <geom name="forklift4_fork_left" type="box" size="0.45 0.06 0.02" pos="1.05 0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift4_fork_right" type="box" size="0.45 0.06 0.02" pos="1.05 -0.14 0.08" material="mat_metal" density="7800" />
+      <geom name="forklift4_fork_shaft" type="box" size="0.12 0.22 0.03" pos="0.70 0 0.10" material="mat_metal" density="7800" />
+
+      <geom name="forklift4_wheel_fl" type="cylinder" size="0.13 0.06" pos="0.25 0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift4_wheel_fr" type="cylinder" size="0.13 0.06" pos="0.25 -0.28 0.13" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift4_wheel_rl" type="cylinder" size="0.11 0.05" pos="-0.55 0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="forklift4_wheel_rr" type="cylinder" size="0.11 0.05" pos="-0.55 -0.26 0.11" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+
+      <geom name="forklift4_guard_left" type="box" size="0.02 0.02 0.55" pos="-0.10 0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift4_guard_right" type="box" size="0.02 0.02 0.55" pos="-0.10 -0.30 0.85" material="mat_metal" density="7800" />
+      <geom name="forklift4_guard_top" type="box" size="0.30 0.32 0.02" pos="-0.10 0 1.40" material="mat_metal" density="7800" />
+    </body>
+
+    <body name="pallet_jack_01" pos="-2.9 -2.5 0.06">
+      <joint name="j_pallet_jack_01" type="free" />
+      <geom name="pj1_frame" type="box" size="0.55 0.22 0.05" pos="0 0 0.06" material="mat_painted_metal" density="7800" friction="1.0 0.02 0.005" />
+      <geom name="pj1_fork_left" type="box" size="0.55 0.07 0.03" pos="0 0.14 0.03" material="mat_painted_metal" density="7800" />
+      <geom name="pj1_fork_right" type="box" size="0.55 0.07 0.03" pos="0 -0.14 0.03" material="mat_painted_metal" density="7800" />
+      <geom name="pj1_handle" type="cylinder" size="0.02 0.70" pos="-0.45 0 0.70" quat="0.7071068 0 0.7071068 0" material="mat_painted_metal" density="7800" contype="0" conaffinity="0" />
+      <geom name="pj1_wheel_front" type="cylinder" size="0.05 0.03" pos="0.50 0 0.05" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="pj1_wheel_rear_1" type="cylinder" size="0.05 0.03" pos="-0.55 0.12 0.05" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="pj1_wheel_rear_2" type="cylinder" size="0.05 0.03" pos="-0.55 -0.12 0.05" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+    </body>
+
+    <body name="pallet_jack_02" pos="2.9 -2.5 0.06">
+      <joint name="j_pallet_jack_02" type="free" />
+      <geom name="pj2_frame" type="box" size="0.55 0.22 0.05" pos="0 0 0.06" material="mat_painted_metal" density="7800" friction="1.0 0.02 0.005" />
+      <geom name="pj2_fork_left" type="box" size="0.55 0.07 0.03" pos="0 0.14 0.03" material="mat_painted_metal" density="7800" />
+      <geom name="pj2_fork_right" type="box" size="0.55 0.07 0.03" pos="0 -0.14 0.03" material="mat_painted_metal" density="7800" />
+      <geom name="pj2_handle" type="cylinder" size="0.02 0.70" pos="-0.45 0 0.70" quat="0.7071068 0 0.7071068 0" material="mat_painted_metal" density="7800" contype="0" conaffinity="0" />
+      <geom name="pj2_wheel_front" type="cylinder" size="0.05 0.03" pos="0.50 0 0.05" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="pj2_wheel_rear_1" type="cylinder" size="0.05 0.03" pos="-0.55 0.12 0.05" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+      <geom name="pj2_wheel_rear_2" type="cylinder" size="0.05 0.03" pos="-0.55 -0.12 0.05" quat="0.7071068 0 0.7071068 0" material="mat_tire" density="1100" />
+    </body>
+
+    <body name="pallet_01" pos="2.4 -1.8 0.05">
+      <geom name="pallet_01_deck" type="box" size="0.55 0.40 0.05" pos="0 0 0.05" material="mat_wood" density="650" contype="1" conaffinity="1" friction="1.2 0.02 0.005" />
+      <geom name="pallet_01_runner_1" type="box" size="0.55 0.06 0.03" pos="0 0.26 0.03" material="mat_wood" density="650" contype="1" conaffinity="1" friction="1.2 0.02 0.005" />
+      <geom name="pallet_01_runner_2" type="box" size="0.55 0.06 0.03" pos="0 0 0.03" material="mat_wood" density="650" contype="1" conaffinity="1" friction="1.2 0.02 0.005" />
+      <geom name="pallet_01_runner_3" type="box" size="0.55 0.06 0.03" pos="0 -0.26 0.03" material="mat_wood" density="650" contype="1" conaffinity="1" friction="1.2 0.02 0.005" />
+    </body>
+
+    <body name="yellow_box_01" pos="2.2 -1.7 0.25">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_01" size="0.20 0.14 0.10" />
+    </body>
+    <body name="yellow_box_02" pos="2.55 -1.9 0.25">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_02" size="0.18 0.12 0.09" />
+    </body>
+    <body name="yellow_box_03" pos="2.35 -1.95 0.47">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_03" size="0.20 0.14 0.10" />
+    </body>
+    <body name="yellow_box_04" pos="2.70 -1.70 0.47">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_04" size="0.18 0.12 0.09" />
+    </body>
+
+    <body name="yellow_box_05" pos="1.6 1.8 0.22">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_05" size="0.22 0.16 0.11" />
+    </body>
+    <body name="yellow_box_06" pos="1.9 1.6 0.22">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_06" size="0.18 0.12 0.09" />
+    </body>
+    <body name="yellow_box_07" pos="1.75 1.85 0.44">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_07" size="0.22 0.16 0.11" />
+    </body>
+    <body name="yellow_box_08" pos="0.2 2.4 0.22">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_yellow_box_08" size="0.20 0.14 0.10" />
+    </body>
+
+    <body name="w2_stack_01" pos="13.8 1.4 0.11">
+      <joint class="package" />
+      <geom class="package" name="g_w2_stack_01" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_stack_02" pos="13.8 1.4 0.33">
+      <joint class="package" />
+      <geom class="package" name="g_w2_stack_02" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_stack_03" pos="14.1 1.55 0.11">
+      <joint class="package" />
+      <geom class="package" name="g_w2_stack_03" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_stack_04" pos="14.1 1.55 0.31">
+      <joint class="package" />
+      <geom class="package" name="g_w2_stack_04" size="0.20 0.14 0.10" />
+    </body>
+
+    <body name="w2_yellow_floor_01" pos="10.8 2.0 0.10">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_w2_yellow_floor_01" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_yellow_floor_02" pos="11.1 2.15 0.10">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_w2_yellow_floor_02" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_yellow_floor_03" pos="10.95 2.08 0.29">
+      <joint class="yellow_package" />
+      <geom class="yellow_package" name="g_w2_yellow_floor_03" size="0.20 0.14 0.10" />
+    </body>
+
+    <body name="w2_rack1_box_01" pos="10.55 2.05 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_01" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_02" pos="10.85 2.05 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_02" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack1_box_03" pos="11.15 2.05 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_03" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack1_box_04" pos="10.55 2.42 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_04" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_05" pos="10.85 2.42 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_05" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack1_box_06" pos="11.15 2.42 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_06" size="0.18 0.12 0.09" />
+    </body>
+
+    <body name="w2_rack1_box_07" pos="10.55 2.05 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_07" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_08" pos="10.85 2.05 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_08" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack1_box_09" pos="11.15 2.05 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_09" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack1_box_10" pos="10.55 2.42 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_10" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_11" pos="10.85 2.42 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_11" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack1_box_12" pos="11.15 2.42 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_12" size="0.18 0.12 0.09" />
+    </body>
+
+    <body name="w2_rack1_box_13" pos="10.60 2.05 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_13" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack1_box_14" pos="10.90 2.05 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_14" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_15" pos="11.20 2.05 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_15" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack1_box_16" pos="10.60 2.42 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_16" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack1_box_17" pos="10.90 2.42 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_17" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_18" pos="11.20 2.42 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_18" size="0.22 0.16 0.11" />
+    </body>
+
+    <body name="w2_rack1_box_19" pos="10.55 2.05 0.84">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_19" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack1_box_20" pos="10.85 2.05 0.84">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_20" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_21" pos="11.15 2.05 0.84">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_21" size="0.22 0.16 0.11" />
+    </body>
+
+    <body name="w2_rack1_box_22" pos="10.55 2.42 1.54">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_22" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack1_box_23" pos="10.85 2.42 1.54">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_23" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_24" pos="11.15 2.42 1.54">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_24" size="0.22 0.16 0.11" />
+    </body>
+
+    <body name="w2_rack1_box_25" pos="10.60 2.05 2.24">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_25" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack1_box_26" pos="10.90 2.05 2.24">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_26" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack1_box_27" pos="11.20 2.05 2.24">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack1_box_27" size="0.22 0.16 0.11" />
+    </body>
+
+    <body name="w2_rack2_box_01" pos="13.75 2.05 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_01" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_02" pos="14.05 2.05 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_02" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack2_box_03" pos="14.35 2.05 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_03" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack2_box_04" pos="13.75 2.42 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_04" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_05" pos="14.05 2.42 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_05" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack2_box_06" pos="14.35 2.42 0.62">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_06" size="0.18 0.12 0.09" />
+    </body>
+
+    <body name="w2_rack2_box_07" pos="13.75 2.05 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_07" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_08" pos="14.05 2.05 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_08" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack2_box_09" pos="14.35 2.05 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_09" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack2_box_10" pos="13.75 2.42 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_10" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_11" pos="14.05 2.42 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_11" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack2_box_12" pos="14.35 2.42 1.32">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_12" size="0.18 0.12 0.09" />
+    </body>
+
+    <body name="w2_rack2_box_13" pos="13.80 2.05 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_13" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack2_box_14" pos="14.10 2.05 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_14" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_15" pos="14.40 2.05 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_15" size="0.22 0.16 0.11" />
+    </body>
+    <body name="w2_rack2_box_16" pos="13.80 2.42 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_16" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack2_box_17" pos="14.10 2.42 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_17" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_18" pos="14.40 2.42 2.02">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_18" size="0.22 0.16 0.11" />
+    </body>
+
+    <body name="w2_rack2_box_19" pos="13.75 2.05 0.84">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_19" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack2_box_20" pos="14.05 2.05 0.84">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_20" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_21" pos="14.35 2.05 0.84">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_21" size="0.22 0.16 0.11" />
+    </body>
+
+    <body name="w2_rack2_box_22" pos="13.75 2.42 1.54">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_22" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack2_box_23" pos="14.05 2.42 1.54">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_23" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_24" pos="14.35 2.42 1.54">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_24" size="0.22 0.16 0.11" />
+    </body>
+
+    <body name="w2_rack2_box_25" pos="13.80 2.05 2.24">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_25" size="0.18 0.12 0.09" />
+    </body>
+    <body name="w2_rack2_box_26" pos="14.10 2.05 2.24">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_26" size="0.20 0.14 0.10" />
+    </body>
+    <body name="w2_rack2_box_27" pos="14.40 2.05 2.24">
+      <joint class="package" />
+      <geom class="package" name="g_w2_rack2_box_27" size="0.22 0.16 0.11" />
+    </body>
+    <body name="corridor_left" pos="-6 0 0">
+      <geom name="corridor_l_slab" type="box" size="2.05 0.95 0.06" pos="0 0 0.06" material="mat_floor" friction="1.2 0.02 0.005" />
+      <geom name="corridor_l_wall_north" type="box" size="2.00 0.08 1.30" pos="0 1.03 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="corridor_l_wall_south" type="box" size="2.00 0.08 1.30" pos="0 -1.03 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="corridor_l_frame_west" type="box" size="0.06 1.00 1.35" pos="-2.00 0 1.35" material="mat_painted_metal" contype="0" conaffinity="0" />
+      <geom name="corridor_l_frame_east" type="box" size="0.06 1.00 1.35" pos="2.00 0 1.35" material="mat_painted_metal" contype="0" conaffinity="0" />
+    </body>
+
+    <body name="warehouse3" pos="-12 0 0">
+      <geom name="w3_slab" type="box" size="4.2 3.2 0.06" pos="0 0 0.06" material="mat_floor" friction="1.2 0.02 0.005" />
+      
+      <geom name="w3_wall_back" type="box" size="4.0 0.08 1.30" pos="0 3.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="w3_wall_left" type="box" size="0.08 3.0 1.30" pos="-4.0 0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      
+      <geom name="w3_wall_right_north" type="box" size="0.08 1.15 1.30" pos="4.0 1.85 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="w3_wall_right_south" type="box" size="0.08 1.15 1.30" pos="4.0 -1.85 1.30" material="mat_wall" friction="1 0.02 0.005" />
+
+      <geom name="w3_front_left" type="box" size="1.45 0.08 1.30" pos="-2.55 -3.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="w3_front_right" type="box" size="1.45 0.08 1.30" pos="2.55 -3.0 1.30" material="mat_wall" friction="1 0.02 0.005" />
+      <geom name="w3_front_lintel" type="box" size="1.10 0.08 0.20" pos="0 -3.0 2.40" material="mat_wall" friction="1 0.02 0.005" />
+
+      <geom name="w3_loading_door_panel" type="box" size="1.08 0.02 0.30" pos="0 -2.92 2.12" material="mat_door" contype="0" conaffinity="0" />
+      <geom name="w3_loading_door_frame_left" type="box" size="0.06 0.03 1.10" pos="-1.16 -2.95 1.10" material="mat_painted_metal" />
+      <geom name="w3_loading_door_frame_right" type="box" size="0.06 0.03 1.10" pos="1.16 -2.95 1.10" material="mat_painted_metal" />
+      <geom name="w3_loading_door_frame_top" type="box" size="1.18 0.03 0.06" pos="0 -2.95 2.20" material="mat_painted_metal" />
+    </body>
+
+    <body name="truck_blue" pos="-12 -7.5 0.7">
+       <joint name="j_truck_blue" type="free" />
+       <geom name="tb_trailer" type="box" size="1.2 3.0 1.4" pos="0 1.0 1.0" material="mat_robot_blue" density="500" />
+       <geom name="tb_wheel_r1" type="cylinder" size="0.4 0.15" pos="1.1 2.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tb_wheel_l1" type="cylinder" size="0.4 0.15" pos="-1.1 2.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tb_wheel_r2" type="cylinder" size="0.4 0.15" pos="1.1 3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tb_wheel_l2" type="cylinder" size="0.4 0.15" pos="-1.1 3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       
+       <geom name="tb_cab" type="box" size="1.1 1.0 1.0" pos="0 -3.5 0.6" material="mat_robot_blue" density="1000" />
+       <geom name="tb_cab_window" type="box" size="1.0 0.1 0.4" pos="0 -4.4 0.9" material="mat_glass" />
+       <geom name="tb_wheel_r3" type="cylinder" size="0.4 0.15" pos="1.0 -3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tb_wheel_l3" type="cylinder" size="0.4 0.15" pos="-1.0 -3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+    </body>
+
+    <body name="truck_white" pos="-6 -6.0 0.7" quat="0.707 0 0 0.707">
+       <joint name="j_truck_white" type="free" />
+       <geom name="tw_trailer" type="box" size="1.2 3.0 1.4" pos="0 1.0 1.0" material="mat_truck_white" density="500" />
+       <geom name="tw_wheel_r1" type="cylinder" size="0.4 0.15" pos="1.1 2.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tw_wheel_l1" type="cylinder" size="0.4 0.15" pos="-1.1 2.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tw_wheel_r2" type="cylinder" size="0.4 0.15" pos="1.1 3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tw_wheel_l2" type="cylinder" size="0.4 0.15" pos="-1.1 3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       
+       <geom name="tw_cab" type="box" size="1.1 1.0 1.0" pos="0 -3.5 0.6" material="mat_truck_white" density="1000" />
+       <geom name="tw_cab_window" type="box" size="1.0 0.1 0.4" pos="0 -4.4 0.9" material="mat_glass" />
+       <geom name="tw_wheel_r3" type="cylinder" size="0.4 0.15" pos="1.0 -3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+       <geom name="tw_wheel_l3" type="cylinder" size="0.4 0.15" pos="-1.0 -3.5 -0.3" quat="0.707 0 0.707 0" material="mat_tire" />
+    </body>
+     <body name="w3_stack_01" pos="-10.5 -4.0 0.11">
+       <joint class="package" />
+       <geom class="package" name="g_w3_stack_01" size="0.22 0.16 0.11" />
+     </body>
+     <body name="w3_stack_02" pos="-10.5 -4.0 0.33">
+       <joint class="package" />
+       <geom class="package" name="g_w3_stack_02" size="0.22 0.16 0.11" />
+     </body>
+     <body name="w3_stack_03" pos="-13.5 -4.0 0.11">
+       <joint class="package" />
+       <geom class="package" name="g_w3_stack_03" size="0.20 0.14 0.10" />
+     </body>
+   </worldbody>
+
+  <equality>
+    <joint name="grip_couple" joint1="j_grip_left" joint2="j_grip_right" polycoef="0 1 0 0 0" />
+  </equality>
+
+  <actuator>
+    <velocity name="a_roller_01" joint="j_roller_01" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_02" joint="j_roller_02" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_03" joint="j_roller_03" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_04" joint="j_roller_04" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_05" joint="j_roller_05" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_06" joint="j_roller_06" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_07" joint="j_roller_07" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_08" joint="j_roller_08" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_09" joint="j_roller_09" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_10" joint="j_roller_10" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_11" joint="j_roller_11" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_12" joint="j_roller_12" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_13" joint="j_roller_13" kv="12" ctrlrange="-30 30" />
+    <velocity name="a_roller_14" joint="j_roller_14" kv="12" ctrlrange="-30 30" />
+
+    <position name="a_arm_1" joint="j_arm_1" kp="250" ctrlrange="-180 180" />
+    <position name="a_arm_2" joint="j_arm_2" kp="250" ctrlrange="-110 110" />
+    <position name="a_arm_3" joint="j_arm_3" kp="220" ctrlrange="-150 150" />
+    <position name="a_arm_4" joint="j_arm_4" kp="120" ctrlrange="-180 180" />
+    <position name="a_arm_5" joint="j_arm_5" kp="120" ctrlrange="-120 120" />
+    <position name="a_arm_6" joint="j_arm_6" kp="80" ctrlrange="-180 180" />
+    <position name="a_grip" joint="j_grip_left" kp="1200" ctrlrange="0 0.05" />
+  </actuator>
+
+  <keyframe>
+    <key name="home" ctrl="18 18 18 18 18 18 18 18 18 18 18 18 18 18   0 0 0 0 0 0 0" />
+  </keyframe>
+</mujoco>
+
