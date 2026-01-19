@@ -1,0 +1,511 @@
+<mujoco model="Tunnel Car Wash KSL">
+    <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+    <option timestep="0.01" gravity="0 0 -9.81" density="1.2" viscosity="0.00002" integrator="RK4"/>
+
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="0.4 0.6 0.8" rgb2="0.1 0.1 0.1" width="512" height="3072"/>
+        <texture type="2d" name="groundplane" builtin="checker" rgb1="0.3 0.35 0.4" rgb2="0.2 0.25 0.3" width="512" height="512" mark="edge" markrgb="0.8 0.8 0.8"/>
+        <material name="groundplane" texture="groundplane" texrepeat="20 20" texuniform="true" reflectance="0.2"/>
+        
+        <!-- Updated Colors based on KSL reference (Bright Yellow Tunnel) -->
+        <material name="ksl_yellow" rgba="1.0 0.85 0.0 1" shininess="0.6" specular="0.4"/>
+        <material name="ksl_logo_red" rgba="0.9 0.1 0.1 1" shininess="0.3"/>
+        
+        <!-- Brush Materials -->
+        <material name="brush_red" rgba="0.9 0.2 0.1 1" shininess="0.1" specular="0.1"/>
+        <material name="brush_black" rgba="0.15 0.15 0.15 1" shininess="0.1" specular="0.1"/>
+        <material name="brush_blue" rgba="0.1 0.2 0.9 1" shininess="0.2"/>
+        <material name="brush_yellow" rgba="0.9 0.8 0.1 1" shininess="0.2"/>
+        <material name="brush_dark_blue" rgba="0.05 0.1 0.3 1" shininess="0.1" specular="0.1"/> <!-- New Dark Blue for brushes -->
+        <material name="brush_mix" rgba="0.5 0.5 0.5 1" shininess="0.2"/> <!-- Placeholder for texture if needed -->
+
+        <material name="steel" rgba="0.7 0.7 0.75 1" shininess="0.8" specular="0.8"/>
+        <material name="black_plastic" rgba="0.1 0.1 0.1 1" shininess="0.3"/>
+        <material name="conveyor_belt" rgba="0.15 0.15 0.15 1" shininess="0.1"/>
+        
+        <!-- Floor Markings -->
+        <material name="paint_white" rgba="0.9 0.9 0.9 1" shininess="0.1" specular="0"/>
+        <material name="paint_yellow" rgba="1.0 0.8 0.0 1" shininess="0.1" specular="0"/>
+        
+        <!-- Signboard Materials -->
+        <material name="sign_board_blue" rgba="0.05 0.1 0.6 1" shininess="0.5"/>
+        <material name="sign_text_white" rgba="1 1 1 1" shininess="0.8" emission="0.3"/>
+        
+        <!-- Glass Material -->
+        <material name="glass" rgba="0.8 0.9 1.0 0.3" shininess="0.9" specular="0.9"/>
+        
+        <!-- Metal Grate Material -->
+        <material name="metal_grate" rgba="0.7 0.7 0.7 1" shininess="0.5" specular="0.5"/>
+    </asset>
+
+    <worldbody>
+        <light pos="8 -8 10" dir="-0.5 0.5 -1" castshadow="true" diffuse="0.9 0.9 0.9"/>
+        <light pos="-8 8 10" dir="0.5 -0.5 -1" castshadow="false" diffuse="0.6 0.6 0.6"/>
+        
+        <geom name="floor" size="0 0 0.1" type="plane" material="groundplane"/>
+
+        <!-- ==================== FLOOR MARKINGS ==================== -->
+        <body name="floor_markings" pos="0 0 0.02">
+            <!-- DRAINAGE GRATES -->
+            <!-- Front Entrance Drain (Transverse) -->
+            <geom name="drain_front_frame" type="box" size="2.5 0.3 0.02" pos="0 -4.8 -0.01" material="brush_black"/> <!-- Dark pit background -->
+            <!-- Grate bars (Front) -->
+            <geom type="box" size="2.5 0.02 0.02" pos="0 -4.6 0" material="metal_grate"/>
+            <geom type="box" size="2.5 0.02 0.02" pos="0 -4.7 0" material="metal_grate"/>
+            <geom type="box" size="2.5 0.02 0.02" pos="0 -4.8 0" material="metal_grate"/>
+            <geom type="box" size="2.5 0.02 0.02" pos="0 -4.9 0" material="metal_grate"/>
+            <geom type="box" size="2.5 0.02 0.02" pos="0 -5.0 0" material="metal_grate"/>
+
+            <!-- Left Side Drain (Longitudinal) -->
+            <geom name="drain_side_L_frame" type="box" size="0.25 4.5 0.02" pos="-2.0 0 -0.01" material="brush_black"/>
+            <!-- Grate bars (Left) - angled for style -->
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -4.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -3.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -3.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -2.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -2.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -1.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -1.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 -0.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 0.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 0.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 1.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 1.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 2.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 2.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 3.0 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 3.5 0" euler="0 0 45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="-2.0 4.0 0" euler="0 0 45" material="metal_grate"/>
+            <!-- Side rails for drain -->
+            <geom type="box" size="0.02 4.5 0.02" pos="-1.75 0 0" material="metal_grate"/>
+            <geom type="box" size="0.02 4.5 0.02" pos="-2.25 0 0" material="metal_grate"/>
+
+            <!-- Right Side Drain (Longitudinal) -->
+            <geom name="drain_side_R_frame" type="box" size="0.25 4.5 0.02" pos="2.0 0 -0.01" material="brush_black"/>
+            <!-- Grate bars (Right) -->
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -4.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -3.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -3.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -2.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -2.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -1.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -1.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 -0.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 0.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 0.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 1.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 1.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 2.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 2.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 3.0 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 3.5 0" euler="0 0 -45" material="metal_grate"/>
+            <geom type="box" size="0.25 0.02 0.02" pos="2.0 4.0 0" euler="0 0 -45" material="metal_grate"/>
+            <!-- Side rails for drain -->
+            <geom type="box" size="0.02 4.5 0.02" pos="1.75 0 0" material="metal_grate"/>
+            <geom type="box" size="0.02 4.5 0.02" pos="2.25 0 0" material="metal_grate"/>
+
+            <!-- Parking/Queue Lane (White) -->
+            <!-- Left Lane Line (Longitudinal) -->
+            <geom name="line_lane_L" type="box" size="0.05 3 0.01" pos="-1.3 -9 0" material="paint_white"/>
+            <!-- Right Lane Line (Longitudinal) -->
+            <geom name="line_lane_R" type="box" size="0.05 3 0.01" pos="1.3 -9 0" material="paint_white"/>
+            <!-- Stop Line (Transverse) -->
+            <geom name="line_stop" type="box" size="1.3 0.1 0.01" pos="0 -5.5 0" material="paint_white"/>
+            <!-- Back Parking Box Line -->
+            <geom name="line_park_back" type="box" size="1.3 0.05 0.01" pos="0 -12 0" material="paint_white"/>
+            
+            <!-- Safety Zones (Yellow) - Near Entrance -->
+            <!-- Left Safety Strip -->
+            <geom name="safety_L" type="box" size="0.2 1.5 0.01" pos="-2.2 -5.0 0" material="paint_yellow"/>
+            <!-- Right Safety Strip -->
+            <geom name="safety_R" type="box" size="0.2 1.5 0.01" pos="2.2 -5.0 0" material="paint_yellow"/>
+            
+            <!-- Diagonal Hazard Stripes -->
+            <geom name="hatch_L1" type="box" size="0.4 0.05 0.01" pos="-2.2 -5.5 0" euler="0 0 45" material="paint_yellow"/>
+            <geom name="hatch_L2" type="box" size="0.4 0.05 0.01" pos="-2.2 -5.0 0" euler="0 0 45" material="paint_yellow"/>
+            <geom name="hatch_L3" type="box" size="0.4 0.05 0.01" pos="-2.2 -4.5 0" euler="0 0 45" material="paint_yellow"/>
+            
+            <geom name="hatch_R1" type="box" size="0.4 0.05 0.01" pos="2.2 -5.5 0" euler="0 0 -45" material="paint_yellow"/>
+            <geom name="hatch_R2" type="box" size="0.4 0.05 0.01" pos="2.2 -5.0 0" euler="0 0 -45" material="paint_yellow"/>
+            <geom name="hatch_R3" type="box" size="0.4 0.05 0.01" pos="2.2 -4.5 0" euler="0 0 -45" material="paint_yellow"/>
+        </body>
+
+        <!-- ==================== TUNNEL STRUCTURE ==================== -->
+        <!-- The tunnel is longer now, approximately 8 meters long (y: -4 to 4) -->
+        <body name="tunnel_frame" pos="0 0 0">
+            <!-- ROOF -->
+            <geom name="roof_plate" type="box" size="2.6 4.2 0.1" pos="0 0 3.1" material="ksl_yellow"/>
+            <geom name="roof_side_L" type="box" size="0.2 4.2 0.4" pos="-2.6 0 3.1" material="ksl_yellow"/>
+            <geom name="roof_side_R" type="box" size="0.2 4.2 0.4" pos="2.6 0 3.1" material="ksl_yellow"/>
+
+            <!-- Side Glass Walls -->
+            <geom name="glass_L" type="box" size="0.05 4.2 1.55" pos="-2.45 0 1.55" material="glass"/>
+            <geom name="glass_R" type="box" size="0.05 4.2 1.55" pos="2.45 0 1.55" material="glass"/>
+
+            <!-- PILLARS (Left and Right) -->
+            <!-- We create 5 pairs of pillars for the tunnel look -->
+            
+            <!-- Pair 1: Entrance (Y = -4) -->
+            <geom name="p1_L" type="box" size="0.2 0.2 1.55" pos="-2.6 -4 1.55" material="ksl_yellow"/>
+            <geom name="p1_R" type="box" size="0.2 0.2 1.55" pos="2.6 -4 1.55" material="ksl_yellow"/>
+            
+            <!-- Pair 2 (Y = -2) -->
+            <geom name="p2_L" type="box" size="0.15 0.15 1.55" pos="-2.6 -2 1.55" material="ksl_yellow"/>
+            <geom name="p2_R" type="box" size="0.15 0.15 1.55" pos="2.6 -2 1.55" material="ksl_yellow"/>
+
+            <!-- Pair 3 (Y = 0) -->
+            <geom name="p3_L" type="box" size="0.15 0.15 1.55" pos="-2.6 0 1.55" material="ksl_yellow"/>
+            <geom name="p3_R" type="box" size="0.15 0.15 1.55" pos="2.6 0 1.55" material="ksl_yellow"/>
+
+            <!-- Pair 4 (Y = 2) -->
+            <geom name="p4_L" type="box" size="0.15 0.15 1.55" pos="-2.6 2 1.55" material="ksl_yellow"/>
+            <geom name="p4_R" type="box" size="0.15 0.15 1.55" pos="2.6 2 1.55" material="ksl_yellow"/>
+
+            <!-- Pair 5: Exit (Y = 4) -->
+            <geom name="p5_L" type="box" size="0.2 0.2 1.55" pos="-2.6 4 1.55" material="ksl_yellow"/>
+            <geom name="p5_R" type="box" size="0.2 0.2 1.55" pos="2.6 4 1.55" material="ksl_yellow"/>
+
+            <!-- SIDE BEAMS (Connecting pillars) -->
+            <geom name="beam_L_low" type="box" size="0.1 4.1 0.1" pos="-2.6 0 0.2" material="ksl_yellow"/>
+            <geom name="beam_R_low" type="box" size="0.1 4.1 0.1" pos="2.6 0 0.2" material="ksl_yellow"/>
+            
+            <!-- LOGO PLATES (Simulated) -->
+            <geom name="logo_plate_L" type="box" size="0.05 0.8 0.4" pos="-2.85 0 2.5" material="ksl_yellow"/>
+            <geom name="logo_text_L" type="cylinder" size="0.3 0.06" pos="-2.85 0 2.5" euler="0 90 0" material="sign_board_blue"/>
+            
+            <geom name="logo_plate_R" type="box" size="0.05 0.8 0.4" pos="2.85 0 2.5" material="ksl_yellow"/>
+            <geom name="logo_text_R" type="cylinder" size="0.3 0.06" pos="2.85 0 2.5" euler="0 90 0" material="sign_board_blue"/>
+            
+            <!-- ENTRANCE SIGNBOARD -->
+            <body name="entrance_sign" pos="0 -4.1 3.8">
+                <!-- Main Board -->
+                <geom name="sign_board" type="box" size="2.0 0.1 0.4" material="sign_board_blue"/>
+                <!-- Supports -->
+                <geom name="sign_leg_L" type="cylinder" fromto="-1.5 0 -0.4 -1.5 0 -0.8" size="0.05" material="steel"/>
+                <geom name="sign_leg_R" type="cylinder" fromto="1.5 0 -0.4 1.5 0 -0.8" size="0.05" material="steel"/>
+                
+                <!-- Simulated Text "洗车间" (Xi Che Jian) -->
+                <!-- Position shifted to center -->
+                
+                <!-- Character 1: 洗 (Xi) at X ~ -0.4 -->
+                <!-- Radical: Water (Left) -->
+                <geom type="box" size="0.015 0.06 0.015" pos="-0.55 -0.06 0.08" euler="0 45 0" material="sign_text_white"/> <!-- Dot 1 -->
+                <geom type="box" size="0.015 0.06 0.015" pos="-0.56 -0.06 0.0" material="sign_text_white"/> <!-- Dot 2 -->
+                <geom type="box" size="0.015 0.06 0.03" pos="-0.55 -0.06 -0.08" euler="0 -45 0" material="sign_text_white"/> <!-- Dash 3 -->
+                
+                <!-- Right Part: Xian -->
+                <geom type="box" size="0.02 0.06 0.01" pos="-0.45 -0.06 0.09" euler="0 -30 0" material="sign_text_white"/> <!-- Top Stroke -->
+                <geom type="box" size="0.04 0.06 0.01" pos="-0.45 -0.06 0.05" material="sign_text_white"/> <!-- Horizontal -->
+                <geom type="box" size="0.01 0.06 0.03" pos="-0.45 -0.06 0.01" material="sign_text_white"/> <!-- Vertical -->
+                <geom type="box" size="0.03 0.06 0.01" pos="-0.45 -0.06 -0.03" material="sign_text_white"/> <!-- Bot Horizontal -->
+                <geom type="box" size="0.01 0.06 0.03" pos="-0.47 -0.06 -0.07" euler="0 20 0" material="sign_text_white"/> <!-- Left Leg -->
+                <geom type="box" size="0.01 0.06 0.03" pos="-0.42 -0.06 -0.07" euler="0 -20 0" material="sign_text_white"/> <!-- Right Leg -->
+
+                <!-- Character 2: 车 (Che) at X ~ 0.0 -->
+                <geom type="box" size="0.05 0.06 0.01" pos="0 -0.06 0.05" material="sign_text_white"/> <!-- Top Horiz -->
+                <geom type="box" size="0.05 0.06 0.01" pos="-0.01 -0.06 0.0" material="sign_text_white"/> <!-- Mid Horiz -->
+                <geom type="box" size="0.01 0.06 0.03" pos="-0.05 -0.06 -0.02" euler="0 20 0" material="sign_text_white"/> <!-- Angled Vertical -->
+                <geom type="box" size="0.07 0.06 0.01" pos="0 -0.06 -0.05" material="sign_text_white"/> <!-- Bot Horiz -->
+                <geom type="box" size="0.01 0.06 0.08" pos="0 -0.06 0" material="sign_text_white"/> <!-- Center Vertical -->
+
+                <!-- Character 3: 间 (Jian) at X ~ 0.4 -->
+                <!-- Door Frame (Men) -->
+                <geom type="box" size="0.01 0.06 0.01" pos="0.35 -0.06 0.08" material="sign_text_white"/> <!-- Top Dot -->
+                <geom type="box" size="0.01 0.06 0.08" pos="0.35 -0.06 -0.02" material="sign_text_white"/> <!-- Left Vert -->
+                <geom type="box" size="0.05 0.06 0.01" pos="0.42 -0.06 0.08" material="sign_text_white"/> <!-- Top Horiz -->
+                <geom type="box" size="0.01 0.06 0.08" pos="0.48 -0.06 0" material="sign_text_white"/> <!-- Right Vert -->
+                <geom type="box" size="0.01 0.06 0.01" pos="0.47 -0.06 -0.07" euler="0 30 0" material="sign_text_white"/> <!-- Hook -->
+                
+                <!-- Inside Sun (Ri) -->
+                <geom type="box" size="0.008 0.06 0.04" pos="0.38 -0.06 -0.03" material="sign_text_white"/> <!-- Left Box -->
+                <geom type="box" size="0.008 0.06 0.04" pos="0.45 -0.06 -0.03" material="sign_text_white"/> <!-- Right Box -->
+                <geom type="box" size="0.03 0.06 0.008" pos="0.415 -0.06 0.005" material="sign_text_white"/> <!-- Top -->
+                <geom type="box" size="0.03 0.06 0.008" pos="0.415 -0.06 -0.03" material="sign_text_white"/> <!-- Mid -->
+                <geom type="box" size="0.03 0.06 0.008" pos="0.415 -0.06 -0.065" material="sign_text_white"/> <!-- Bot -->
+            </body>
+        </body>
+
+        <!-- ==================== CONVEYOR SYSTEM ==================== -->
+        <body name="floor_system" pos="0 0 0.05">
+            <geom name="guide_rail_L" type="box" size="0.05 5 0.05" pos="-1.0 0 0" material="steel"/>
+            <geom name="guide_rail_R" type="box" size="0.05 5 0.05" pos="1.0 0 0" material="steel"/>
+            
+            <geom name="conveyor_belt" type="box" size="0.8 5 0.02" pos="0 0 0" material="conveyor_belt"/>
+            <!-- Yellow entry guides -->
+            <geom name="entry_guide_L" type="box" size="0.1 0.5 0.1" pos="-1.3 -5 0" euler="0 0 -15" material="ksl_yellow"/>
+            <geom name="entry_guide_R" type="box" size="0.1 0.5 0.1" pos="1.3 -5 0" euler="0 0 15" material="ksl_yellow"/>
+        </body>
+
+        <!-- ==================== BRUSHES & EQUIPMENT ==================== -->
+        
+        <!-- 1. ENTRY VERTICAL BRUSHES (Dark Blue, Dense) -->
+        <body name="brush_v1_L" pos="-1.8 -3 1.5">
+            <!-- Shaft is static relative to the joint -->
+            <geom type="cylinder" size="0.1 1.5" material="steel" conaffinity="0" contype="0"/>
+            <!-- Spinning part needs to be a child body for the joint to act on it properly if mass is high -->
+            <body name="brush_v1_L_spin" pos="0 0 0">
+                <joint name="j_v1_L" axis="0 0 1" damping="0" limited="false"/> <!-- Zero damping for perpetual rotation -->
+                
+                <!-- Uniform Dark Blue Layers -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+                
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+            </body>
+        </body>
+        
+        <body name="brush_v1_R" pos="1.8 -3 1.5">
+            <geom type="cylinder" size="0.1 1.5" material="steel" conaffinity="0" contype="0"/>
+            <body name="brush_v1_R_spin" pos="0 0 0">
+                <joint name="j_v1_R" axis="0 0 1" damping="0" limited="false"/>
+                
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+                
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 30" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 60" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 90" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 120" material="brush_dark_blue" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 150" material="brush_dark_blue" density="0.001"/>
+            </body>
+        </body>
+
+        <!-- 2. WHEEL WASHERS (Horizontal Floor Rollers) -->
+        <body name="brush_wheel_L" pos="-1.5 0 0.2"> <!-- Changed from skirt to wheel roller -->
+            <geom type="cylinder" size="0.05 1.5" material="steel" euler="90 0 0" conaffinity="0" contype="0"/> <!-- Horizontal shaft along Y -->
+            <body name="brush_wheel_L_spin" pos="0 0 0">
+                <joint name="j_wheel_L" axis="0 1 0" damping="0" limited="false"/> <!-- Rotate around Y -->
+                
+                <!-- Bristles along the length -->
+                <!-- Section 1 -->
+                <geom type="box" size="0.25 1.5 0.02" pos="0 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.25 1.5 0.02" pos="0 0 0" euler="0 30 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.25 1.5 0.02" pos="0 0 0" euler="0 60 0" material="brush_black" density="0.001"/>
+                
+                <geom type="box" size="0.02 1.5 0.25" pos="0 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.02 1.5 0.25" pos="0 0 0" euler="0 30 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.02 1.5 0.25" pos="0 0 0" euler="0 60 0" material="brush_black" density="0.001"/>
+                
+                <!-- Yellow tips/spirals simulation -->
+                <geom type="box" size="0.26 0.1 0.02" pos="0 -0.7 0" material="brush_yellow" density="0.001"/>
+                <geom type="box" size="0.02 0.1 0.26" pos="0 -0.7 0" material="brush_yellow" density="0.001"/>
+                
+                <geom type="box" size="0.26 0.1 0.02" pos="0 0.7 0" material="brush_yellow" density="0.001"/>
+                <geom type="box" size="0.02 0.1 0.26" pos="0 0.7 0" material="brush_yellow" density="0.001"/>
+            </body>
+        </body>
+
+        <body name="brush_wheel_R" pos="1.5 0 0.2">
+            <geom type="cylinder" size="0.05 1.5" material="steel" euler="90 0 0" conaffinity="0" contype="0"/>
+            <body name="brush_wheel_R_spin" pos="0 0 0">
+                <joint name="j_wheel_R" axis="0 1 0" damping="0" limited="false"/>
+                
+                <!-- Bristles along the length -->
+                <geom type="box" size="0.25 1.5 0.02" pos="0 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.25 1.5 0.02" pos="0 0 0" euler="0 30 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.25 1.5 0.02" pos="0 0 0" euler="0 60 0" material="brush_black" density="0.001"/>
+                
+                <geom type="box" size="0.02 1.5 0.25" pos="0 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.02 1.5 0.25" pos="0 0 0" euler="0 30 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.02 1.5 0.25" pos="0 0 0" euler="0 60 0" material="brush_black" density="0.001"/>
+                
+                <!-- Yellow tips -->
+                <geom type="box" size="0.26 0.1 0.02" pos="0 -0.7 0" material="brush_yellow" density="0.001"/>
+                <geom type="box" size="0.02 0.1 0.26" pos="0 -0.7 0" material="brush_yellow" density="0.001"/>
+                
+                <geom type="box" size="0.26 0.1 0.02" pos="0 0.7 0" material="brush_yellow" density="0.001"/>
+                <geom type="box" size="0.02 0.1 0.26" pos="0 0.7 0" material="brush_yellow" density="0.001"/>
+            </body>
+        </body>
+
+        <!-- 3. TOP BRUSH (Horizontal, Red/Black Mix - Dense) -->
+        <body name="brush_top" pos="0 1 2.2">
+            <!-- Support mechanism -->
+            <geom name="top_arm_L" type="capsule" fromto="-2 0 0 -1.5 0 -0.5" size="0.05" material="steel"/>
+            <geom name="top_arm_R" type="capsule" fromto="2 0 0 1.5 0 -0.5" size="0.05" material="steel"/>
+            
+            <body name="brush_top_spin" pos="0 0 -0.5">
+                <!-- AXIS CHANGED TO X (1 0 0) to rotate along the length of the tunnel width, preventing propeller crash -->
+                <joint name="j_top" axis="1 0 0" damping="0" limited="false"/>
+                <geom type="cylinder" fromto="-1.4 0 0 1.4 0 0" size="0.1" material="steel" conaffinity="0" contype="0"/>
+                
+                <!-- Section 1 (Left): Red -->
+                <geom type="box" size="0.35 0.6 0.02" pos="-1.05 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="-1.05 0 0" euler="30 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="-1.05 0 0" euler="60 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="-1.05 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="-1.05 0 0" euler="30 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="-1.05 0 0" euler="60 0 0" material="brush_red" density="0.001"/>
+                
+                <!-- Section 2: Black -->
+                <geom type="box" size="0.35 0.6 0.02" pos="-0.35 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="-0.35 0 0" euler="30 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="-0.35 0 0" euler="60 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="-0.35 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="-0.35 0 0" euler="30 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="-0.35 0 0" euler="60 0 0" material="brush_black" density="0.001"/>
+
+                <!-- Section 3: Red -->
+                <geom type="box" size="0.35 0.6 0.02" pos="0.35 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="0.35 0 0" euler="30 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="0.35 0 0" euler="60 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="0.35 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="0.35 0 0" euler="30 0 0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="0.35 0 0" euler="60 0 0" material="brush_red" density="0.001"/>
+
+                <!-- Section 4 (Right): Black -->
+                <geom type="box" size="0.35 0.6 0.02" pos="1.05 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="1.05 0 0" euler="30 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.6 0.02" pos="1.05 0 0" euler="60 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="1.05 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="1.05 0 0" euler="30 0 0" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.35 0.02 0.6" pos="1.05 0 0" euler="60 0 0" material="brush_black" density="0.001"/>
+            </body>
+        </body>
+
+        <!-- 4. SECONDARY VERTICAL BRUSHES (Exit, Layered) -->
+        <body name="brush_v2_L" pos="-1.8 3 1.5">
+            <geom type="cylinder" size="0.1 1.5" material="steel" conaffinity="0" contype="0"/>
+            <body name="brush_v2_L_spin" pos="0 0 0">
+                <joint name="j_v2_L" axis="0 0 1" damping="0" limited="false"/>
+                
+                <!-- Layer 1 (Bottom): Red -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 90" material="brush_red" density="0.001"/>
+                
+                <!-- Layer 2: Black -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 90" material="brush_black" density="0.001"/>
+
+                <!-- Layer 3: Red -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 90" material="brush_red" density="0.001"/>
+
+                <!-- Layer 4: Black -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 90" material="brush_black" density="0.001"/>
+
+                <!-- Layer 5 (Top): Red -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 90" material="brush_red" density="0.001"/>
+            </body>
+        </body>
+
+        <body name="brush_v2_R" pos="1.8 3 1.5">
+            <geom type="cylinder" size="0.1 1.5" material="steel" conaffinity="0" contype="0"/>
+            <body name="brush_v2_R_spin" pos="0 0 0">
+                <joint name="j_v2_R" axis="0 0 1" damping="0" limited="false"/>
+                 <!-- Layer 1 (Bottom): Red -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -1.0" euler="0 0 90" material="brush_red" density="0.001"/>
+                
+                <!-- Layer 2: Black -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 -0.5" euler="0 0 90" material="brush_black" density="0.001"/>
+
+                <!-- Layer 3: Red -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.0" euler="0 0 90" material="brush_red" density="0.001"/>
+
+                <!-- Layer 4: Black -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" material="brush_black" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 0.5" euler="0 0 90" material="brush_black" density="0.001"/>
+
+                <!-- Layer 5 (Top): Red -->
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" material="brush_red" density="0.001"/>
+                <geom type="box" size="0.6 0.02 0.25" pos="0 0 1.0" euler="0 0 90" material="brush_red" density="0.001"/>
+            </body>
+        </body>
+
+        <!-- BLOW DRYERS (Yellow boxes at exit) -->
+        <body name="dryers" pos="0 4.2 2.5">
+            <geom name="dryer_housing" type="box" size="2.0 0.3 0.3" material="ksl_yellow"/>
+            <geom name="dryer_nozzle_1" type="cylinder" fromto="-1 0 0 -1 -0.3 -0.5" size="0.2" material="black_plastic"/>
+            <geom name="dryer_nozzle_2" type="cylinder" fromto="1 0 0 1 -0.3 -0.5" size="0.2" material="black_plastic"/>
+        </body>
+
+    </worldbody>
+
+    <actuator>
+        <!-- Entrance Vertical Brushes (Higher Torque) -->
+        <velocity joint="j_v1_L" kv="100" name="motor_v1_L" ctrlrange="-15 15"/>
+        <velocity joint="j_v1_R" kv="100" name="motor_v1_R" ctrlrange="-15 15"/>
+        
+        <!-- Skirt Brushes -->
+        <velocity joint="j_wheel_L" kv="50" name="motor_wheel_L" ctrlrange="-20 20"/>
+        <velocity joint="j_wheel_R" kv="50" name="motor_wheel_R" ctrlrange="-20 20"/>
+
+        <!-- Top Brush -->
+        <velocity joint="j_top" kv="100" name="motor_top" ctrlrange="-15 15"/>
+
+        <!-- Exit Vertical Brushes -->
+        <velocity joint="j_v2_L" kv="100" name="motor_v2_L" ctrlrange="-15 15"/>
+        <velocity joint="j_v2_R" kv="100" name="motor_v2_R" ctrlrange="-15 15"/>
+    </actuator>
+
+    <keyframe>
+        <!-- Added ctrl values to make brushes spin automatically on reset -->
+        <!-- Order: v1_L, v1_R, skirt_L, skirt_R, top, v2_L, v2_R -->
+        <!-- Added qvel values to give initial momentum -->
+        <key name="entrance_view" 
+             qpos="0 0 0 0 0 0 0" 
+             qvel="5 -5 10 -10 5 5 -5" 
+             ctrl="5 -5 10 -10 5 5 -5"/>
+    </keyframe>
+</mujoco>
