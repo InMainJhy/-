@@ -1,0 +1,239 @@
+<mujoco model="Tool Cabinet Detailed">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.005" gravity="0 0 -9.81" density="1000" viscosity="0.1" integrator="RK4"/>
+
+  <!-- High Quality Visual Settings (Approximating Professional Requirements) -->
+  <visual>
+    <!-- 1. Resolution: 4K (3840x2160) -->
+    <!-- 2. Shadow Quality: 8192 shadowsize, 8 samples for MSAA -->
+    <quality shadowsize="8192" offsamples="8"/>
+    <global fovy="45" offwidth="3840" offheight="2160" azimuth="140" elevation="-20"/>
+    <map shadowclip="0.5" shadowscale="0.5" zfar="100"/>
+    <!-- 3. Atmospheric Fog for depth -->
+    <rgba haze="0.15 0.25 0.35 1" fog="0 0 0 1"/>
+  </visual>
+  
+  <statistic extent="2" center="0 0 0.5"/>
+
+  <default>
+    <geom rgba="0.7 0.7 0.7 1" type="box" solref="0.004 1"/>
+    <joint damping="1" armature="0.1"/>
+  </default>
+
+  <asset>
+    <!-- Improved Textures & Materials -->
+    <!-- Skybox for metallic reflections (Pseudo-HDR) -->
+    <texture type="skybox" builtin="gradient" rgb1="0.6 0.7 0.8" rgb2="0.1 0.15 0.2" width="2048" height="2048"/>
+    
+    <!-- Floor with high res checker -->
+    <texture type="2d" name="groundplane" builtin="checker" rgb1="0.25 0.26 0.28" rgb2="0.22 0.23 0.24" width="2048" height="2048" mark="edge" markrgb="0.8 0.8 0.8"/>
+    <material name="groundplane" texture="groundplane" texrepeat="20 20" reflectance="0.2" shininess="0.1"/>
+    
+    <!-- Coffee Bar Materials -->
+    <texture name="tex_wood_light" type="2d" builtin="flat" rgb1="0.82 0.7 0.55" width="512" height="512"/> 
+    <material name="mat_wood_light" texture="tex_wood_light" reflectance="0.2" shininess="0.1"/>
+
+    <!-- ================== PBR-LIKE METALLIC MATERIALS ================== -->
+    <!-- NOTE: MuJoCo uses Phong shading, so we approximate PBR by tuning reflectance/specular/shininess -->
+    
+    <!-- Main Body: Wood to match Coffee Bar -->
+    <material name="mat_silver_body" texture="tex_wood_light" reflectance="0.2" shininess="0.1"/>
+    
+    <!-- Drawer Fronts: Wood -->
+    <material name="mat_silver_bright" texture="tex_wood_light" reflectance="0.2" shininess="0.1"/>
+    
+    <!-- Matte Black Handles -->
+    <!-- Low specular, low reflectance -->
+    <material name="mat_handle_black" rgba="0.05 0.05 0.05 1" shininess="0.1" specular="0.1" reflectance="0.05"/>
+    
+    <!-- Rubber Top Surface -->
+    <material name="mat_top_surface" rgba="0.15 0.15 0.15 1" shininess="0.1" specular="0.1" reflectance="0.0"/>
+    
+    <!-- Red Plastic Tool Holders (Accents) -->
+    <material name="mat_red_tool" rgba="0.8 0.05 0.05 1" shininess="0.6" specular="0.4" reflectance="0.1"/>
+    
+    <!-- Chrome Trim -->
+    <material name="mat_chrome" rgba="0.98 0.98 0.99 1" shininess="1.0" specular="1.0" reflectance="0.98"/>
+    
+    <!-- Toolbox Materials (Exact copies from toolbox_portable.xml) -->
+    <material name="mat_tb_silver" rgba="0.75 0.76 0.78 1" specular="0.9" shininess="0.7" reflectance="0.7"/>
+    <material name="mat_tb_latch" rgba="0.8 0.82 0.85 1" specular="1.0" shininess="0.9" reflectance="0.8"/>
+    <material name="mat_tb_body" rgba="0.08 0.08 0.08 1" specular="0.3" shininess="0.1" reflectance="0.05"/>
+    <material name="mat_tb_handle" rgba="0.05 0.05 0.05 1" specular="0.7" shininess="0.8" reflectance="0.3"/>
+    <material name="mat_tb_text" rgba="0.8 0.1 0.1 1" specular="0.5" shininess="0.5" emission="0.2"/>
+
+    <!-- Wheel Materials -->
+    <material name="mat_wheel_rubber" rgba="0.1 0.1 0.1 1" shininess="0.3" specular="0.2"/>
+    <material name="mat_wheel_metal" rgba="0.7 0.7 0.7 1" shininess="0.9" specular="0.9"/>
+    
+    <!-- Cloth Material -->
+    <material name="mat_towel" rgba="0.9 0.9 0.8 1" shininess="0.1" specular="0.0" reflectance="0.0"/>
+  </asset>
+
+  <worldbody>
+    <!-- Lighting Setup for "Studio" Look (Approximating Global Illumination) -->
+    <!-- Key Light (Cool white for silver, casts main shadow) -->
+    <light pos="2 -2 4" dir="-0.5 0.5 -1" diffuse="0.9 0.9 0.95" specular="0.8 0.8 0.8" castshadow="true" active="true"/>
+    
+    <!-- Fill Light (Warmer, softens shadows) -->
+    <light pos="-2 -2 4" dir="0.5 0.5 -1" diffuse="0.5 0.5 0.45" specular="0.2 0.2 0.2" castshadow="false" active="true"/>
+    
+    <!-- Rim Light (Back light for edge definition) -->
+    <light pos="0 3 3" dir="0 -1 -0.8" diffuse="0.4 0.4 0.5" specular="0.8 0.8 0.8" castshadow="false" active="true"/>
+
+    <!-- Bounce Light (Simulates light bouncing off floor/walls) -->
+    <light pos="0 0 -2" dir="0 0 1" diffuse="0.1 0.1 0.1" specular="0 0 0" castshadow="false" active="true"/>
+
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" condim="3"/>
+
+    <!-- Wrench 1 (Combination Wrench) - Placed on cabinet top (Surface Z=1.06) -->
+    <body name="wrench_1" pos="0.1 0.25 1.062" euler="0 90 45">
+        <freejoint/>
+        <!-- Handle -->
+        <geom name="w1_handle" type="box" size="0.006 0.08 0.002" material="mat_silver_bright"/>
+        <!-- Open End Head -->
+        <body name="w1_head_open" pos="0 0.085 0">
+            <geom type="cylinder" size="0.015 0.002" euler="90 0 0" material="mat_silver_bright"/>
+            <!-- Jaws -->
+            <geom type="box" size="0.005 0.015 0.002" pos="-0.008 0.01 0" euler="0 0 15" material="mat_silver_bright"/>
+            <geom type="box" size="0.005 0.015 0.002" pos="0.008 0.01 0" euler="0 0 -15" material="mat_silver_bright"/>
+        </body>
+        <!-- Ring End Head -->
+        <body name="w1_head_ring" pos="0 -0.085 0">
+            <geom type="cylinder" size="0.012 0.002" euler="90 0 0" material="mat_silver_bright"/>
+        </body>
+    </body>
+
+    <!-- Wrench 2 (Smaller) - Placed on cabinet top -->
+    <body name="wrench_2" pos="-0.1 0.25 1.062" euler="0 90 -30">
+        <freejoint/>
+        <!-- Handle -->
+        <geom name="w2_handle" type="box" size="0.005 0.06 0.002" material="mat_silver_bright"/>
+        <!-- Open End Head -->
+        <body name="w2_head_open" pos="0 0.065 0">
+            <geom type="cylinder" size="0.012 0.002" euler="90 0 0" material="mat_silver_bright"/>
+            <!-- Jaws -->
+            <geom type="box" size="0.004 0.012 0.002" pos="-0.006 0.008 0" euler="0 0 15" material="mat_silver_bright"/>
+            <geom type="box" size="0.004 0.012 0.002" pos="0.006 0.008 0" euler="0 0 -15" material="mat_silver_bright"/>
+        </body>
+        <!-- Ring End Head -->
+        <body name="w2_head_ring" pos="0 -0.065 0">
+            <geom type="cylinder" size="0.01 0.002" euler="90 0 0" material="mat_silver_bright"/>
+        </body>
+    </body>
+
+    <!-- Toolbox removed as requested -->
+    <!--
+    <body name="toolbox" pos="0 0 1.14">
+      ...
+    </body>
+    -->
+
+    <!-- Tool Cabinet Root -->
+    <body name="tool_cabinet" pos="0 0 0.1">
+       <!-- Wheels (Casters) -->
+      <!-- Front Left -->
+      <body name="wheel_fl" pos="0.3 0.2 0">
+        <joint name="wheel_fl_steer" axis="0 0 1" type="hinge"/>
+        <geom name="wheel_fl" type="cylinder" size="0.05 0.02" zaxis="0 1 0" material="mat_wheel_rubber"/>
+        <geom name="wheel_fl_bracket" type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_wheel_metal"/>
+      </body>
+      <!-- Front Right -->
+      <body name="wheel_fr" pos="0.3 -0.2 0">
+        <joint name="wheel_fr_steer" axis="0 0 1" type="hinge"/>
+        <geom name="wheel_fr" type="cylinder" size="0.05 0.02" zaxis="0 1 0" material="mat_wheel_rubber"/>
+        <geom name="wheel_fr_bracket" type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_wheel_metal"/>
+      </body>
+      <!-- Rear Left -->
+      <body name="wheel_rl" pos="-0.3 0.2 0">
+        <geom name="wheel_rl" type="cylinder" size="0.05 0.02" zaxis="0 1 0" material="mat_wheel_rubber"/>
+        <geom name="wheel_rl_bracket" type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_wheel_metal"/>
+      </body>
+      <!-- Rear Right -->
+      <body name="wheel_rr" pos="-0.3 -0.2 0">
+        <geom name="wheel_rr" type="cylinder" size="0.05 0.02" zaxis="0 1 0" material="mat_wheel_rubber"/>
+        <geom name="wheel_rr_bracket" type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_wheel_metal"/>
+      </body>
+
+      <!-- Main Cabinet Body -->
+      <!-- Height starts above wheels, say 0.1m up -->
+      <body name="cabinet_body" pos="0 0 0.12">
+        <!-- Frame Dimensions: Width 0.7m (y), Depth 0.5m (x), Height 0.8m (z) -->
+        
+        <!-- Bottom Plate -->
+        <geom name="bottom_plate" type="box" size="0.35 0.35 0.02" pos="0 0 0.02" material="mat_silver_body"/>
+        
+        <!-- Top Surface (Black Worktop) -->
+        <geom name="top_surface" type="box" size="0.36 0.36 0.02" pos="0 0 0.82" material="mat_top_surface"/>
+        
+        <!-- Side Walls -->
+        <geom name="wall_left" type="box" size="0.35 0.02 0.4" pos="0 0.33 0.42" material="mat_silver_body"/>
+        <geom name="wall_right" type="box" size="0.35 0.02 0.4" pos="0 -0.33 0.42" material="mat_silver_body"/>
+        
+        <!-- Back Wall -->
+        <geom name="wall_back" type="box" size="0.02 0.35 0.4" pos="-0.33 0 0.42" material="mat_silver_body"/>
+        
+        <!-- Hanging Towel (Cloth Simulation) - REMOVED due to XML Schema compatibility -->
+
+        <!-- Drawers -->
+        <!-- Drawer 1 (Top, Thin) -->
+        <body name="drawer_1" pos="0 0 0.7">
+           <joint name="slide_1" axis="1 0 0" type="slide" range="0 0.3"/>
+           <!-- Changed to Silver Bright -->
+           <geom name="d1_face" type="box" size="0.01 0.30 0.05" pos="0.34 0 0" material="mat_silver_bright"/>
+           <geom name="d1_body" type="box" size="0.32 0.28 0.04" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+           <!-- Handle -->
+           <geom name="d1_handle_L" type="box" size="0.02 0.06 0.01" pos="0.36 0.15 0" material="mat_handle_black"/>
+           <geom name="d1_handle_R" type="box" size="0.02 0.06 0.01" pos="0.36 -0.15 0" material="mat_handle_black"/>
+           <!-- Chrome trim -->
+           <geom name="d1_trim" type="box" size="0.012 0.28 0.005" pos="0.34 0 0.03" material="mat_chrome"/>
+        </body>
+
+        <!-- Drawer 2 (Medium) -->
+        <body name="drawer_2" pos="0 0 0.58">
+           <joint name="slide_2" axis="1 0 0" type="slide" range="0 0.3"/>
+           <geom name="d2_face" type="box" size="0.01 0.30 0.06" pos="0.34 0 0" material="mat_silver_bright"/>
+           <geom name="d2_body" type="box" size="0.32 0.28 0.05" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+           <geom name="d2_trim" type="box" size="0.012 0.28 0.005" pos="0.34 0 0.04" material="mat_chrome"/>
+        </body>
+
+        <!-- Drawer 3 (Medium) -->
+        <body name="drawer_3" pos="0 0 0.44">
+           <joint name="slide_3" axis="1 0 0" type="slide" range="0 0.3"/>
+           <geom name="d3_face" type="box" size="0.01 0.30 0.07" pos="0.34 0 0" material="mat_silver_bright"/>
+           <geom name="d3_body" type="box" size="0.32 0.28 0.06" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+           <geom name="d3_trim" type="box" size="0.012 0.28 0.005" pos="0.34 0 0.05" material="mat_chrome"/>
+        </body>
+
+        <!-- Drawer 4 (Bottom, Large) -->
+        <body name="drawer_4" pos="0 0 0.25">
+           <joint name="slide_4" axis="1 0 0" type="slide" range="0 0.3"/>
+           <geom name="d4_face" type="box" size="0.01 0.30 0.11" pos="0.34 0 0" material="mat_silver_bright"/>
+           <geom name="d4_body" type="box" size="0.32 0.28 0.10" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+           <geom name="d4_trim" type="box" size="0.012 0.28 0.005" pos="0.34 0 0.09" material="mat_chrome"/>
+        </body>
+        
+        <!-- Pegboard (Back Panel) -->
+        <body name="pegboard" pos="-0.33 0 1.1">
+            <!-- Silver Pegboard -->
+            <geom name="pegboard_panel" type="box" size="0.01 0.35 0.3" material="mat_silver_body"/>
+            
+            <!-- Tools/Decorations -->
+            <geom name="tool_holder_1" type="box" size="0.02 0.05 0.08" pos="0.02 0.2 0.1" material="mat_red_tool"/>
+            <geom name="tool_package" type="box" size="0.015 0.06 0.08" pos="0.02 0 0.1" rgba="0.1 0.1 0.1 1"/>
+            <geom name="tool_package_white" type="box" size="0.016 0.05 0.07" pos="0.02 0 0.1" rgba="0.9 0.9 0.9 1"/>
+            <geom name="hook_1" type="box" size="0.02 0.01 0.02" pos="0.02 -0.15 0.15" material="mat_red_tool"/>
+            <geom name="hook_2" type="box" size="0.02 0.01 0.02" pos="0.02 -0.25 0.10" material="mat_red_tool"/>
+        </body>
+        
+        <!-- Cloth/Towel Hanging on side handle (Simulated) -->
+        <!-- Positioned on the right side -->
+        <body name="towel_holder" pos="0 -0.36 0.7">
+             <!-- A small bar to hold the towel -->
+             <geom name="towel_bar" type="cylinder" size="0.01 0.1" fromto="0 0 0 0 -0.05 0" material="mat_chrome"/>
+        </body>
+
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

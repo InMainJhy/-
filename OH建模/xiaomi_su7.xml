@@ -1,0 +1,262 @@
+<mujoco model="xiaomi_su7_final">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.005" gravity="0 0 -9.81" integrator="RK4"/>
+
+  <default>
+    <joint damping="0.5" armature="0.1"/>
+    <geom condim="3" friction="1.0 0.05 0.05" solimp="0.9 0.95 0.001" solref="0.02 1"/>
+    <default class="body_col">
+        <geom material="body_paint" type="ellipsoid"/>
+    </default>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.5 0.7 0.9" rgb2="0.1 0.1 0.2" width="1024" height="1024"/>
+    <texture name="grid" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 .1 .1" width="512" height="512" mark="edge" markrgb=".8 .8 .8"/>
+    <material name="grid" texture="grid" texrepeat="5 5" texuniform="true" reflectance=".2"/>
+    
+    <!-- Materials -->
+    <!-- Paint: Deep Bay Blue -->
+    <material name="body_paint" rgba="0.0 0.42 0.62 1" shininess="0.95" specular="0.85" reflectance="0.3"/>
+    
+    <!-- Trim & Plastics -->
+    <material name="black_trim" rgba="0.05 0.05 0.05 1" shininess="0.3" specular="0.3"/>
+    <material name="black_gloss" rgba="0.01 0.01 0.01 1" shininess="0.95" specular="1.0" reflectance="0.3"/> <!-- Piano Black -->
+    <material name="chrome" rgba="0.9 0.9 0.92 1" shininess="1.0" specular="1.0" reflectance="0.8"/> <!-- Window trim -->
+    <material name="interior_dark" rgba="0.1 0.1 0.12 1" shininess="0.1"/> <!-- Interior seats -->
+    
+    <!-- Glass Types -->
+    <!-- Front Windshield: Clearer, slightly green/blue tint -->
+    <material name="glass_front" rgba="0.1 0.15 0.2 0.3" shininess="1.0" specular="1.0" reflectance="0.4"/>
+    <!-- Roof & Rear: Privacy glass (darker) -->
+    <material name="glass_dark" rgba="0.02 0.02 0.05 0.9" shininess="1.0" specular="1.0" reflectance="0.7"/>
+    
+    <!-- Wheels & Tires -->
+    <material name="rim_silver" rgba="0.85 0.85 0.88 1" shininess="0.9" specular="0.9"/>
+    <material name="rim_black" rgba="0.05 0.05 0.05 1" shininess="0.6"/>
+    <!-- Tire: Matte rubber, very low specular -->
+    <material name="tire_rubber" rgba="0.08 0.08 0.08 1" shininess="0.1" specular="0.1" reflectance="0.02"/>
+    <!-- Tire Sidewall: Slightly smoother -->
+    <material name="tire_sidewall" rgba="0.08 0.08 0.08 1" shininess="0.3" specular="0.2" reflectance="0.05"/>
+    
+    <!-- Lights & Others -->
+    <material name="light_white" rgba="0.95 0.95 1.0 1" emission="1.0"/>
+    <material name="light_red" rgba="1.0 0.0 0.0 1" emission="0.8"/>
+    <material name="caliper_yellow" rgba="1.0 0.85 0.0 1" shininess="0.9"/>
+    <material name="logo_silver" rgba="0.95 0.95 0.95 1" shininess="1.0" specular="1.0"/>
+  </asset>
+
+  <worldbody>
+    <light pos="5 5 10" dir="-0.5 -0.5 -1" diffuse="0.8 0.8 0.8" specular="0.5 0.5 0.5"/>
+    <light pos="-5 -5 10" dir="0.5 0.5 -1" diffuse="0.4 0.4 0.4" specular="0.2 0.2 0.2"/>
+    <geom name="floor" size="30 30 0.1" type="plane" material="grid"/>
+
+    <!-- Car Body Group -->
+    <body name="car" pos="0 0 0.37">
+      <joint type="free"/>
+
+      <!-- ==================== INTERIOR PROXY (To make glass look real) ==================== -->
+      <!-- Front Seats -->
+      <geom name="seat_fl" type="box" size="0.3 0.25 0.3" pos="0.1 0.35 0.4" material="interior_dark"/>
+      <geom name="seat_fr" type="box" size="0.3 0.25 0.3" pos="0.1 -0.35 0.4" material="interior_dark"/>
+      <!-- Rear Seats -->
+      <geom name="seat_rear" type="box" size="0.3 0.6 0.35" pos="-0.7 0 0.4" material="interior_dark"/>
+      <!-- Parcel Shelf -->
+      <geom name="shelf" type="box" size="0.4 0.6 0.05" pos="-1.3 0 0.55" material="interior_dark"/>
+
+      <!-- ==================== CHASSIS & LOWER BODY ==================== -->
+      <geom name="chassis_base" type="box" size="1.4 0.85 0.08" pos="0 0 0.08" material="black_trim"/>
+      <geom name="skirt_l" type="box" size="1.2 0.05 0.04" pos="0 0.88 0.08" material="black_gloss"/>
+      <geom name="skirt_r" type="box" size="1.2 0.05 0.04" pos="0 -0.88 0.08" material="black_gloss"/>
+      <geom name="body_core" type="box" size="1.3 0.88 0.2" pos="0.1 0 0.3" material="body_paint"/>
+
+      <!-- ==================== FRONT SECTION ==================== -->
+      <geom name="hood_main" type="ellipsoid" size="1.1 0.86 0.14" pos="1.5 0 0.32" euler="0 8 0" material="body_paint"/>
+      <geom name="nose" type="ellipsoid" size="0.45 0.82 0.1" pos="2.35 0 0.22" euler="0 12 0" material="body_paint"/>
+      <geom name="front_lip" type="box" size="0.2 0.8 0.02" pos="2.65 0 0.1" material="black_gloss"/>
+      <geom name="intake_l" type="box" size="0.1 0.15 0.1" pos="2.5 0.7 0.15" material="black_gloss"/>
+      <geom name="intake_r" type="box" size="0.1 0.15 0.1" pos="2.5 -0.7 0.15" material="black_gloss"/>
+
+      <!-- ==================== GREENHOUSE (Windows & Pillars) ==================== -->
+      
+      <!-- A-Pillars -->
+      <geom name="pillar_a_l" type="capsule" size="0.04" fromto="0.8 0.65 0.6  0.4 0.55 0.9" material="body_paint"/>
+      <geom name="pillar_a_r" type="capsule" size="0.04" fromto="0.8 -0.65 0.6 0.4 -0.55 0.9" material="body_paint"/>
+
+      <!-- B-Pillars (Piano Black) -->
+      <!-- Removed protruding pillars to fix visual artifact -->
+
+      <!-- C-Pillars / Roof Rail -->
+      <geom name="pillar_c_l" type="capsule" size="0.05" fromto="-0.6 0.55 0.9 -1.4 0.6 0.6" material="body_paint"/>
+      <geom name="pillar_c_r" type="capsule" size="0.05" fromto="-0.6 -0.55 0.9 -1.4 -0.6 0.6" material="body_paint"/>
+
+      <!-- Window Trim (Chrome/Black line above windows) -->
+      <geom name="trim_l" type="capsule" size="0.015" fromto="0.8 0.65 0.65 -1.2 0.62 0.65" material="chrome"/> <!-- Simplified arc -->
+      <geom name="trim_r" type="capsule" size="0.015" fromto="0.8 -0.65 0.65 -1.2 -0.62 0.65" material="chrome"/>
+
+      <!-- Glass Surfaces -->
+      <!-- Windshield -->
+      <geom name="windshield" type="box" size="0.65 0.6 0.02" pos="0.6 0 0.72" euler="0 62 0" material="glass_front"/>
+      
+      <!-- Panoramic Roof (Improved with Frame) -->
+      <!-- The glass -->
+      <geom name="roof_glass" type="ellipsoid" size="0.8 0.52 0.05" pos="-0.1 0 0.93" material="glass_dark"/>
+      <!-- The black frame/rails merging with glass -->
+      <geom name="roof_rail_l" type="capsule" size="0.04" fromto="0.5 0.55 0.9 -0.8 0.55 0.9" material="black_gloss"/>
+      <geom name="roof_rail_r" type="capsule" size="0.04" fromto="0.5 -0.55 0.9 -0.8 -0.55 0.9" material="black_gloss"/>
+      
+      <!-- Side Windows (Front - Clearer) -->
+      <!-- Removed window_fl -->
+      <!-- Removed window_fr -->
+      
+      <!-- Side Windows (Rear - Darker) -->
+      <!-- Removed window_rl -->
+      <!-- Removed window_rr -->
+
+      <!-- Rear Windshield (Fastback slope, Dark) -->
+      <geom name="rear_glass" type="box" size="0.75 0.6 0.02" pos="-1.15 0 0.68" euler="0 -68 0" material="glass_dark"/>
+
+      <!-- ==================== REAR SECTION ==================== -->
+      <geom name="trunk_deck" type="ellipsoid" size="0.85 0.82 0.18" pos="-1.9 0 0.4" euler="0 -4 0" material="body_paint"/>
+      <geom name="spoiler_base" type="box" size="0.15 0.6 0.02" pos="-2.5 0 0.52" euler="0 5 0" material="body_paint"/>
+      <geom name="spoiler_wing" type="box" size="0.05 0.62 0.01" pos="-2.6 0 0.55" euler="0 15 0" material="black_gloss"/>
+      
+      <!-- Diffuser -->
+      <geom name="diffuser_main" type="box" size="0.2 0.7 0.05" pos="-2.6 0 0.15" material="black_trim"/>
+      <geom name="diffuser_fin1" type="box" size="0.2 0.01 0.08" pos="-2.6 0 0.1" material="black_trim"/>
+      <geom name="diffuser_fin2" type="box" size="0.2 0.01 0.08" pos="-2.6 0.3 0.1" material="black_trim"/>
+      <geom name="diffuser_fin3" type="box" size="0.2 0.01 0.08" pos="-2.6 -0.3 0.1" material="black_trim"/>
+
+      <!-- ==================== FENDERS ==================== -->
+      <geom name="fender_fl" type="ellipsoid" size="0.55 0.15 0.22" pos="1.5 0.86 0.35" material="body_paint"/>
+      <geom name="fender_fr" type="ellipsoid" size="0.55 0.15 0.22" pos="1.5 -0.86 0.35" material="body_paint"/>
+      <geom name="fender_rl" type="ellipsoid" size="0.65 0.18 0.28" pos="-1.5 0.9 0.4" material="body_paint"/>
+      <geom name="fender_rr" type="ellipsoid" size="0.65 0.18 0.28" pos="-1.5 -0.9 0.4" material="body_paint"/>
+
+      <!-- ==================== DETAILS ==================== -->
+      <!-- LiDAR -->
+      <geom name="lidar_base" type="box" size="0.06 0.08 0.01" pos="0.9 0 0.93" material="black_trim"/>
+      <geom name="lidar_bump" type="capsule" size="0.08 0.04" pos="0.9 0 0.95" zaxis="0 1 0" material="black_trim"/>
+      <geom name="lidar_window" type="box" size="0.03 0.05 0.015" pos="0.94 0 0.95" material="glass_dark"/>
+
+      <!-- Headlights -->
+      <geom name="hl_housing_l" type="ellipsoid" size="0.28 0.16 0.09" pos="2.15 0.68 0.28" euler="0 12 18" material="glass_front"/>
+      <geom name="hl_inner_l" type="box" size="0.1 0.1 0.01" pos="2.1 0.68 0.28" euler="0 60 18" material="black_trim"/>
+      <geom name="hl_bulb_l1" type="capsule" size="0.03 0.05" pos="2.18 0.72 0.28" zaxis="0 1 0" material="light_white"/>
+      <geom name="hl_bulb_l2" type="capsule" size="0.03 0.05" pos="2.18 0.64 0.28" zaxis="0 1 0" material="light_white"/>
+      
+      <geom name="hl_housing_r" type="ellipsoid" size="0.28 0.16 0.09" pos="2.15 -0.68 0.28" euler="0 12 -18" material="glass_front"/>
+      <geom name="hl_inner_r" type="box" size="0.1 0.1 0.01" pos="2.1 -0.68 0.28" euler="0 60 -18" material="black_trim"/>
+      <geom name="hl_bulb_r1" type="capsule" size="0.03 0.05" pos="2.18 -0.72 0.28" zaxis="0 1 0" material="light_white"/>
+      <geom name="hl_bulb_r2" type="capsule" size="0.03 0.05" pos="2.18 -0.64 0.28" zaxis="0 1 0" material="light_white"/>
+
+      <!-- Vents & Lights -->
+      <geom name="vent_l" type="box" size="0.12 0.02 0.12" pos="0.9 0.92 0.2" euler="0 0 12" material="black_gloss"/>
+      <geom name="vent_r" type="box" size="0.12 0.02 0.12" pos="0.9 -0.92 0.2" euler="0 0 -12" material="black_gloss"/>
+      <geom name="tail_bar" type="capsule" size="0.04 0.78" pos="-2.55 0 0.45" zaxis="0 1 0" material="light_red"/>
+      <geom name="tail_housing" type="box" size="0.04 0.82 0.05" pos="-2.53 0 0.45" material="glass_dark"/>
+
+      <!-- Mirrors -->
+      <body name="mirror_l" pos="0.75 0.92 0.58">
+        <geom name="mirror_stem_l" type="capsule" size="0.015" fromto="0 0 0 0.05 0.05 0" material="black_trim"/>
+        <geom name="mirror_housing_l" type="ellipsoid" size="0.08 0.04 0.05" pos="0.08 0.08 0.01" material="body_paint"/>
+        <geom name="mirror_face_l" type="ellipsoid" size="0.005 0.038 0.045" pos="0.07 0.08 0.01" material="rim_silver"/>
+      </body>
+      <body name="mirror_r" pos="0.75 -0.92 0.58">
+        <geom name="mirror_stem_r" type="capsule" size="0.015" fromto="0 0 0 0.05 -0.05 0" material="black_trim"/>
+        <geom name="mirror_housing_r" type="ellipsoid" size="0.08 0.04 0.05" pos="0.08 -0.08 0.01" material="body_paint"/>
+        <geom name="mirror_face_r" type="ellipsoid" size="0.005 0.038 0.045" pos="0.07 -0.08 0.01" material="rim_silver"/>
+      </body>
+
+      <!-- Logo -->
+      <geom name="logo_front" type="box" size="0.04 0.04 0.005" pos="2.5 0 0.28" euler="0 15 0" material="logo_silver"/>
+      <geom name="logo_rear" type="box" size="0.03 0.1 0.005" pos="-2.3 0 0.45" euler="0 -80 0" material="logo_silver"/>
+
+      <!-- ==================== WHEELS ==================== -->
+      <!-- Improved realism: Added sidewall bulge visual -->
+      
+      <!-- Front Left -->
+      <body name="steer_fl" pos="1.5 0.92 0.0">
+        <joint name="steering_fl" axis="0 0 1" limited="true" range="-0.6 0.6" damping="5"/>
+        <geom name="knuckle_fl" type="cylinder" size="0.1 0.05" euler="90 0 0" material="black_trim" mass="1"/>
+        <body name="wheel_fl" pos="0 0 0">
+          <joint name="joint_fl" axis="0 1 0"/>
+          <!-- Physics Tire (Hidden/Inner) -->
+          <geom name="tire_fl" type="cylinder" size="0.34 0.13" zaxis="0 1 0" material="tire_rubber" mass="10"/>
+          <!-- Visual Sidewall (Slightly larger, thinner) to simulate bulge -->
+          <geom name="tire_wall_fl" type="ellipsoid" size="0.345 0.125 0.345" zaxis="0 1 0" material="tire_sidewall" mass="0" group="1"/>
+          
+          <geom name="rim_fl" type="cylinder" size="0.22 0.135" zaxis="0 1 0" material="rim_black"/>
+          <geom name="rim_edge_fl" type="cylinder" size="0.22 0.01" pos="0 0.136 0" zaxis="0 1 0" material="rim_silver"/>
+          <!-- Spokes -->
+          <geom name="spoke_fl1" type="box" size="0.2 0.03 0.01" pos="0 0.14 0" material="rim_silver"/>
+          <geom name="spoke_fl2" type="box" size="0.2 0.03 0.01" pos="0 0.14 0" euler="0 72 0" material="rim_silver"/>
+          <geom name="spoke_fl3" type="box" size="0.2 0.03 0.01" pos="0 0.14 0" euler="0 144 0" material="rim_silver"/>
+          <geom name="spoke_fl4" type="box" size="0.2 0.03 0.01" pos="0 0.14 0" euler="0 216 0" material="rim_silver"/>
+          <geom name="spoke_fl5" type="box" size="0.2 0.03 0.01" pos="0 0.14 0" euler="0 288 0" material="rim_silver"/>
+          <geom name="caliper_fl" type="box" size="0.14 0.05 0.09" pos="-0.12 0 0.15" material="caliper_yellow" mass="0"/>
+        </body>
+      </body>
+
+      <!-- Front Right -->
+      <body name="steer_fr" pos="1.5 -0.92 0.0">
+        <inertial pos="0 0 0" mass="5" diaginertia="0.1 0.1 0.1"/>
+        <joint name="steering_fr" axis="0 0 1" limited="true" range="-0.6 0.6" damping="5"/>
+        <geom name="knuckle_fr" type="cylinder" size="0.1 0.05" euler="90 0 0" material="black_trim" mass="0"/>
+        <body name="wheel_fr" pos="0 0 0">
+          <joint name="joint_fr" axis="0 1 0"/>
+          <geom name="tire_fr" type="cylinder" size="0.34 0.13" zaxis="0 1 0" material="tire_rubber"/>
+          <geom name="tire_wall_fr" type="ellipsoid" size="0.345 0.125 0.345" zaxis="0 1 0" material="tire_sidewall" mass="0" group="1"/>
+          <geom name="rim_fr" type="cylinder" size="0.22 0.135" zaxis="0 1 0" material="rim_black"/>
+          <geom name="rim_edge_fr" type="cylinder" size="0.22 0.01" pos="0 -0.136 0" zaxis="0 1 0" material="rim_silver"/>
+          <geom name="spoke_fr1" type="box" size="0.2 0.03 0.01" pos="0 -0.14 0" material="rim_silver"/>
+          <geom name="spoke_fr2" type="box" size="0.2 0.03 0.01" pos="0 -0.14 0" euler="0 72 0" material="rim_silver"/>
+          <geom name="spoke_fr3" type="box" size="0.2 0.03 0.01" pos="0 -0.14 0" euler="0 144 0" material="rim_silver"/>
+          <geom name="spoke_fr4" type="box" size="0.2 0.03 0.01" pos="0 -0.14 0" euler="0 216 0" material="rim_silver"/>
+          <geom name="spoke_fr5" type="box" size="0.2 0.03 0.01" pos="0 -0.14 0" euler="0 288 0" material="rim_silver"/>
+          <geom name="caliper_fr" type="box" size="0.14 0.05 0.09" pos="-0.12 0 0.15" material="caliper_yellow" mass="0"/>
+        </body>
+      </body>
+
+      <!-- Rear Left -->
+      <body name="wheel_rl" pos="-1.5 0.92 0.0">
+        <joint name="joint_rl" axis="0 1 0"/>
+        <geom name="tire_rl" type="cylinder" size="0.34 0.15" zaxis="0 1 0" material="tire_rubber"/>
+        <geom name="tire_wall_rl" type="ellipsoid" size="0.345 0.145 0.345" zaxis="0 1 0" material="tire_sidewall" mass="0" group="1"/>
+        <geom name="rim_rl" type="cylinder" size="0.22 0.155" zaxis="0 1 0" material="rim_black"/>
+        <geom name="rim_edge_rl" type="cylinder" size="0.22 0.01" pos="0 0.156 0" zaxis="0 1 0" material="rim_silver"/>
+        <geom name="spoke_rl1" type="box" size="0.2 0.03 0.01" pos="0 0.16 0" material="rim_silver"/>
+        <geom name="spoke_rl2" type="box" size="0.2 0.03 0.01" pos="0 0.16 0" euler="0 72 0" material="rim_silver"/>
+        <geom name="spoke_rl3" type="box" size="0.2 0.03 0.01" pos="0 0.16 0" euler="0 144 0" material="rim_silver"/>
+        <geom name="spoke_rl4" type="box" size="0.2 0.03 0.01" pos="0 0.16 0" euler="0 216 0" material="rim_silver"/>
+        <geom name="spoke_rl5" type="box" size="0.2 0.03 0.01" pos="0 0.16 0" euler="0 288 0" material="rim_silver"/>
+        <geom name="caliper_rl" type="box" size="0.1 0.04 0.07" pos="0.12 0 0.15" material="caliper_yellow" mass="0"/>
+      </body>
+
+      <!-- Rear Right -->
+      <body name="wheel_rr" pos="-1.5 -0.92 0.0">
+        <joint name="joint_rr" axis="0 1 0"/>
+        <geom name="tire_rr" type="cylinder" size="0.34 0.15" zaxis="0 1 0" material="tire_rubber"/>
+        <geom name="tire_wall_rr" type="ellipsoid" size="0.345 0.145 0.345" zaxis="0 1 0" material="tire_sidewall" mass="0" group="1"/>
+        <geom name="rim_rr" type="cylinder" size="0.22 0.155" zaxis="0 1 0" material="rim_black"/>
+        <geom name="rim_edge_rr" type="cylinder" size="0.22 0.01" pos="0 -0.156 0" zaxis="0 1 0" material="rim_silver"/>
+        <geom name="spoke_rr1" type="box" size="0.2 0.03 0.01" pos="0 -0.16 0" material="rim_silver"/>
+        <geom name="spoke_rr2" type="box" size="0.2 0.03 0.01" pos="0 -0.16 0" euler="0 72 0" material="rim_silver"/>
+        <geom name="spoke_rr3" type="box" size="0.2 0.03 0.01" pos="0 -0.16 0" euler="0 144 0" material="rim_silver"/>
+        <geom name="spoke_rr4" type="box" size="0.2 0.03 0.01" pos="0 -0.16 0" euler="0 216 0" material="rim_silver"/>
+        <geom name="spoke_rr5" type="box" size="0.2 0.03 0.01" pos="0 -0.16 0" euler="0 288 0" material="rim_silver"/>
+        <geom name="caliper_rr" type="box" size="0.1 0.04 0.07" pos="0.12 0 0.15" material="caliper_yellow" mass="0"/>
+      </body>
+
+    </body>
+  </worldbody>
+  
+  <actuator>
+    <position name="steer_fl" joint="steering_fl" kp="5000" ctrlrange="-0.6 0.6"/>
+    <position name="steer_fr" joint="steering_fr" kp="5000" ctrlrange="-0.6 0.6"/>
+    <motor name="drive_fl" joint="joint_fl" gear="800"/>
+    <motor name="drive_fr" joint="joint_fr" gear="800"/>
+    <motor name="drive_rl" joint="joint_rl" gear="800"/>
+    <motor name="drive_rr" joint="joint_rr" gear="800"/>
+  </actuator>
+</mujoco>

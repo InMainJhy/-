@@ -1,0 +1,263 @@
+<mujoco model="coffee_machine_hifi">
+  <!--
+    高度仿真咖啡机（MJCF）
+    单位：米/千克/秒；角度：度
+    作者：Trae Assistant
+    创建日期：2026-01-22
+    版本：1.1.0
+
+    关键“仿真”变量（通过关节表示，便于在MuJoCo Viewer中直接滑动控制）：
+      - tank_level: 0..0.08      水箱液面高度（m，视觉代理）
+      - boiler_temp: 0..1        锅炉温度归一化（0≈20°C，1≈100°C）
+      - pump_pressure: 0..1      泵压归一化（0≈0 bar，1≈10 bar）
+      - water_flow: 0..1         出水流量归一化（视觉代理）
+      - cup_level: 0..0.035      杯中液面高度（m，视觉代理）
+
+    交互面板：
+      - power_btn / brew_btn: 按钮按下行程（m）
+      - steam_knob_angle: 蒸汽旋钮角度（deg）
+      - pressure_needle: 压力表指针角度（deg）
+
+    演示关键帧（Key）：idle → fill_water → heat_up → brew → done
+  -->
+
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true" autolimits="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"/>
+
+  <visual>
+    <headlight ambient="0.14 0.14 0.16" diffuse="0.20 0.20 0.22" specular="0.10 0.10 0.10"/>
+    <rgba haze="0.92 0.94 0.97 1"/>
+    <global offwidth="2560" offheight="1440" fovy="42"/>
+    <quality shadowsize="4096" offsamples="8"/>
+    <map znear="0.01" zfar="20" shadowscale="0.4"/>
+  </visual>
+
+  <statistic extent="1.0" center="0 0 0.18"/>
+
+  <asset>
+    <texture name="tex_sky" type="skybox" builtin="gradient" rgb1="0.88 0.92 0.98" rgb2="0.22 0.28 0.38" width="2048" height="2048"/>
+    <texture name="tex_floor" type="2d" builtin="checker" rgb1="0.80 0.80 0.81" rgb2="0.72 0.72 0.73" width="1024" height="1024" mark="edge" markrgb="0.55 0.55 0.56"/>
+    <texture name="tex_brushed" type="2d" builtin="checker" rgb1="0.76 0.77 0.79" rgb2="0.70 0.71 0.73" width="2048" height="2048" mark="random" markrgb="0.62 0.63 0.65"/>
+    <texture name="tex_white_plastic" type="2d" builtin="flat" rgb1="0.965 0.965 0.965" width="1024" height="1024"/>
+    <texture name="tex_dark_plastic" type="2d" builtin="flat" rgb1="0.10 0.10 0.11" width="1024" height="1024"/>
+    <texture name="tex_rubber" type="2d" builtin="checker" rgb1="0.08 0.08 0.08" rgb2="0.06 0.06 0.06" width="1024" height="1024" mark="random" markrgb="0.05 0.05 0.05"/>
+
+    <material name="mat_floor" texture="tex_floor" texrepeat="8 8" reflectance="0.10" shininess="0.35" specular="0.15"/>
+    <material name="mat_plastic_white" texture="tex_white_plastic" reflectance="0.22" shininess="0.55" specular="0.35"/>
+    <material name="mat_plastic_dark" texture="tex_dark_plastic" reflectance="0.10" shininess="0.45" specular="0.25"/>
+    <material name="mat_brushed_steel" texture="tex_brushed" texrepeat="6 6" reflectance="0.30" shininess="0.95" specular="0.85"/>
+    <material name="mat_chrome" rgba="0.92 0.92 0.96 1" reflectance="0.80" shininess="1.0" specular="1.0"/>
+    <material name="mat_rubber" texture="tex_rubber" texrepeat="6 6" reflectance="0.05" shininess="0.20" specular="0.08"/>
+    <material name="mat_glass" rgba="0.80 0.88 0.95 0.18" reflectance="0.90" shininess="1.0" specular="0.90"/>
+    <material name="mat_water" rgba="0.65 0.82 1.0 0.25" reflectance="0.95" shininess="1.0" specular="0.85"/>
+    <material name="mat_display" rgba="0.12 0.60 1.0 1" emission="2.5" reflectance="0.02" shininess="0.9" specular="0.4"/>
+    <material name="mat_indicator" rgba="0.30 1.0 0.45 1" emission="1.2" reflectance="0.0"/>
+    <material name="mat_espresso" rgba="0.32 0.19 0.10 0.55" reflectance="0.0" shininess="0.0" specular="0.0"/>
+  </asset>
+
+  <default>
+    <geom contype="1" conaffinity="1" friction="0.9 0.01 0.001" solimp="0.95 0.99 0.01" solref="0.02 1"/>
+    <default class="visual">
+      <geom contype="0" conaffinity="0" group="2"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <light name="key" pos="1.8 -2.0 2.2" dir="-0.7 0.8 -1" diffuse="0.95 0.92 0.88" specular="0.25 0.25 0.25" castshadow="true" cutoff="45"/>
+    <light name="fill" pos="-1.6 1.3 1.6" dir="0.6 -0.4 -1" diffuse="0.25 0.28 0.35" specular="0.02 0.02 0.02" castshadow="false" cutoff="90"/>
+    <light name="bounce" pos="0 0 1.0" dir="0 0 -1" diffuse="0.10 0.10 0.09" specular="0 0 0" attenuation="0.4 0 0.04" castshadow="false" cutoff="120"/>
+
+    <camera name="main" pos="0.62 -0.85 0.48" xyaxes="0.80 0.60 0  -0.25 0.33 0.91"/>
+
+    <geom name="floor" type="plane" pos="0 0 0" size="2 2 0.1" material="mat_floor"/>
+
+    <!-- Espresso machine overall dimensions (approx.): W=0.23m, D=0.32m, H=0.35m -->
+    <body name="coffee_machine" pos="0 0 0">
+      <body name="sim_state" pos="0 0 0.001">
+        <body name="var_tank_level" pos="-0.07 0 0.33">
+          <joint name="tank_level" type="slide" axis="0 0 1" range="0 0.08"/>
+          <geom class="visual" type="box" size="0.042 0.062 0.002" pos="0 0 0" material="mat_water"/>
+        </body>
+
+        <body name="var_boiler_temp" pos="0 0 0">
+          <joint name="boiler_temp" type="slide" axis="0 0 1" range="0 1"/>
+          <geom class="visual" type="sphere" size="0.001" rgba="0 0 0 0"/>
+        </body>
+
+        <body name="var_pump_pressure" pos="0 0 0">
+          <joint name="pump_pressure" type="slide" axis="0 0 1" range="0 1"/>
+          <geom class="visual" type="sphere" size="0.001" rgba="0 0 0 0"/>
+        </body>
+
+        <body name="var_water_flow" pos="0 0 0">
+          <joint name="water_flow" type="slide" axis="0 0 1" range="0 1"/>
+          <geom class="visual" type="sphere" size="0.001" rgba="0 0 0 0"/>
+        </body>
+
+        <body name="var_cup_level" pos="0.12 0 0.072">
+          <joint name="cup_level" type="slide" axis="0 0 1" range="0 0.035"/>
+          <geom class="visual" type="cylinder" size="0.028 0.001" pos="0 0 0.0" material="mat_espresso"/>
+        </body>
+      </body>
+
+      <body name="base" pos="0 0 0.0">
+        <geom name="base_shell" type="box" size="0.16 0.13 0.028" pos="0 0 0.028" material="mat_plastic_white"/>
+        <geom name="base_front_lip" type="box" size="0.16 0.13 0.007" pos="0 0 0.007" material="mat_plastic_white"/>
+        <geom name="tray_top" type="box" size="0.148 0.118 0.004" pos="0 0 0.058" material="mat_brushed_steel"/>
+        <geom class="visual" type="box" size="0.14 0.11 0.018" pos="0 0 0.038" material="mat_plastic_dark"/>
+
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 0.09 0.062" material="mat_chrome"/>
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 0.065 0.062" material="mat_chrome"/>
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 0.040 0.062" material="mat_chrome"/>
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 0.015 0.062" material="mat_chrome"/>
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 -0.010 0.062" material="mat_chrome"/>
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 -0.035 0.062" material="mat_chrome"/>
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 -0.060 0.062" material="mat_chrome"/>
+        <geom class="visual" type="box" size="0.14 0.004 0.003" pos="0 -0.085 0.062" material="mat_chrome"/>
+
+        <geom name="foot_fl" type="cylinder" size="0.018 0.006" pos="0.12 0.09 0.006" material="mat_rubber"/>
+        <geom name="foot_fr" type="cylinder" size="0.018 0.006" pos="0.12 -0.09 0.006" material="mat_rubber"/>
+        <geom name="foot_bl" type="cylinder" size="0.018 0.006" pos="-0.12 0.09 0.006" material="mat_rubber"/>
+        <geom name="foot_br" type="cylinder" size="0.018 0.006" pos="-0.12 -0.09 0.006" material="mat_rubber"/>
+      </body>
+
+      <body name="column" pos="0 0 0.06">
+        <geom name="column_shell" type="box" size="0.11 0.09 0.125" pos="0 0 0.125" material="mat_plastic_white"/>
+        <geom class="visual" type="box" size="0.112 0.092 0.018" pos="0 0 0.258" material="mat_plastic_white"/>
+        <geom class="visual" type="box" size="0.098 0.078 0.018" pos="0 0 0.278" material="mat_plastic_white"/>
+
+        <geom class="visual" type="box" size="0.003 0.070 0.085" pos="0.113 0 0.155" material="mat_brushed_steel"/>
+        <geom class="visual" type="box" size="0.003 0.040 0.050" pos="0.113 0 0.060" material="mat_plastic_dark"/>
+        <geom class="visual" type="box" size="0.002 0.075 0.095" pos="0.108 0 0.145" material="mat_plastic_dark"/>
+        <geom class="visual" type="box" size="0.010 0.075 0.002" pos="0.100 0 0.235" material="mat_chrome"/>
+
+        <body name="boiler" pos="-0.02 0 0.15">
+          <geom class="visual" type="cylinder" size="0.035 0.055" pos="0 0 0" material="mat_brushed_steel"/>
+          <geom class="visual" type="cylinder" size="0.028 0.05" pos="0 0 0.01" material="mat_chrome"/>
+        </body>
+
+        <body name="pump" pos="0.05 0 0.05">
+          <geom class="visual" type="cylinder" size="0.022 0.03" pos="0 0 0" material="mat_plastic_dark"/>
+          <geom class="visual" type="capsule" size="0.015 0.02" pos="0 0 0.03" material="mat_brushed_steel"/>
+        </body>
+      </body>
+
+      <body name="head_unit" pos="0 0 0.30">
+        <geom name="head_shell" type="box" size="0.135 0.09 0.052" pos="0 0 0.042" material="mat_plastic_white"/>
+        <geom class="visual" type="box" size="0.125 0.085 0.018" pos="0 0 0.102" material="mat_plastic_white"/>
+        <geom class="visual" type="capsule" size="0.012 0.078" fromto="0.135 0.078 0.102  0.135 -0.078 0.102" material="mat_plastic_white"/>
+        <geom class="visual" type="capsule" size="0.012 0.078" fromto="-0.135 0.078 0.102  -0.135 -0.078 0.102" material="mat_plastic_white"/>
+
+        <body name="water_tank" pos="-0.07 0 0.07">
+          <geom class="visual" type="box" size="0.045 0.065 0.055" pos="0 0 0" material="mat_glass"/>
+          <geom class="visual" type="box" size="0.046 0.066 0.002" pos="0 0 0.058" material="mat_plastic_white"/>
+        </body>
+
+        <body name="control_panel" pos="0.06 0 0.06">
+          <geom name="panel_face" type="box" size="0.065 0.085 0.018" pos="0.035 0 0.0" material="mat_plastic_white"/>
+          <geom class="visual" type="box" size="0.058 0.078 0.001" pos="0.082 0 0.0195" material="mat_brushed_steel"/>
+
+          <body name="pressure_gauge" pos="0.078 0 0.02">
+            <geom class="visual" type="cylinder" size="0.032 0.008" pos="0 0 0" material="mat_chrome"/>
+            <geom class="visual" type="cylinder" size="0.028 0.003" pos="0 0 0.009" material="mat_plastic_dark"/>
+            <body name="gauge_needle" pos="0 0 0.012">
+              <joint name="pressure_needle" type="hinge" axis="0 0 1" range="0 270"/>
+              <geom class="visual" type="capsule" size="0.002 0.022" pos="0.012 0 0" material="mat_indicator"/>
+              <geom class="visual" type="sphere" size="0.004" pos="0 0 0" material="mat_chrome"/>
+            </body>
+          </body>
+
+          <body name="power_button" pos="0.03 0.035 0.02">
+            <joint name="power_btn" type="slide" axis="1 0 0" range="0 0.004"/>
+            <geom class="visual" type="cylinder" size="0.010 0.006" pos="0.0 0 0" euler="0 90 0" material="mat_chrome"/>
+            <geom class="visual" type="cylinder" size="0.007 0.002" pos="0.004 0 0" euler="0 90 0" material="mat_indicator"/>
+          </body>
+
+          <body name="brew_button" pos="0.03 -0.035 0.02">
+            <joint name="brew_btn" type="slide" axis="1 0 0" range="0 0.004"/>
+            <geom class="visual" type="cylinder" size="0.010 0.006" pos="0.0 0 0" euler="0 90 0" material="mat_chrome"/>
+            <geom class="visual" type="cylinder" size="0.007 0.002" pos="0.004 0 0" euler="0 90 0" material="mat_display"/>
+          </body>
+
+          <body name="steam_knob" pos="0.12 -0.06 0.02">
+            <joint name="steam_knob_angle" type="hinge" axis="1 0 0" range="0 120"/>
+            <geom class="visual" type="cylinder" size="0.018 0.010" pos="0 0 0" euler="0 90 0" material="mat_chrome"/>
+            <geom class="visual" type="cylinder" size="0.016 0.010" pos="0 0 0.004" euler="0 90 0" material="mat_brushed_steel"/>
+          </body>
+
+          <body name="status_display" pos="0.11 0.06 0.02">
+            <geom class="visual" type="box" size="0.015 0.030 0.002" pos="0 0 0" material="mat_display"/>
+          </body>
+        </body>
+
+        <body name="group_head" pos="0.09 0 0.0">
+          <geom class="visual" type="cylinder" size="0.045 0.020" pos="0 0 -0.03" material="mat_chrome"/>
+          <geom class="visual" type="cylinder" size="0.035 0.010" pos="0 0 -0.055" material="mat_brushed_steel"/>
+          <geom class="visual" type="capsule" size="0.004 0.016" pos="0.012 0.012 -0.08" euler="0 90 0" material="mat_chrome"/>
+          <geom class="visual" type="capsule" size="0.004 0.016" pos="0.012 -0.012 -0.08" euler="0 90 0" material="mat_chrome"/>
+
+          <body name="portafilter" pos="0 0 -0.07">
+            <joint name="portafilter_lock" type="hinge" axis="0 0 1" range="-60 60"/>
+            <geom class="visual" type="cylinder" size="0.038 0.010" pos="0 0 0" material="mat_chrome"/>
+            <geom class="visual" type="cylinder" size="0.034 0.010" pos="0 0 -0.012" material="mat_plastic_dark"/>
+            <body name="portafilter_handle" pos="0.10 0 -0.005">
+              <geom class="visual" type="capsule" size="0.015 0.085" pos="0 0 0" euler="0 90 0" material="mat_plastic_white"/>
+              <geom class="visual" type="cylinder" size="0.012 0.006" pos="0.095 0 0" euler="0 90 0" material="mat_chrome"/>
+              <geom class="visual" type="cylinder" size="0.010 0.003" pos="0.083 0 0" euler="0 90 0" material="mat_brushed_steel"/>
+            </body>
+          </body>
+
+          <body name="espresso_streams" pos="0.012 0 -0.08">
+            <joint name="stream_extend" type="slide" axis="0 0 -1" range="0 0.11"/>
+            <geom class="visual" type="cylinder" size="0.0018 0.055" pos="0 0.012 -0.055" material="mat_espresso"/>
+            <geom class="visual" type="cylinder" size="0.0018 0.055" pos="0 -0.012 -0.055" material="mat_espresso"/>
+          </body>
+        </body>
+      </body>
+
+      <body name="cup" pos="0.12 0 0.062">
+        <geom class="visual" type="cylinder" size="0.032 0.040" pos="0 0 0.04" material="mat_glass"/>
+        <geom class="visual" type="cylinder" size="0.030 0.002" pos="0 0 0.002" material="mat_brushed_steel"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position name="act_tank_level" joint="tank_level" kp="800" ctrlrange="0 0.08"/>
+    <position name="act_boiler_temp" joint="boiler_temp" kp="400" ctrlrange="0 1"/>
+    <position name="act_pump_pressure" joint="pump_pressure" kp="400" ctrlrange="0 1"/>
+    <position name="act_water_flow" joint="water_flow" kp="400" ctrlrange="0 1"/>
+    <position name="act_cup_level" joint="cup_level" kp="800" ctrlrange="0 0.035"/>
+
+    <position name="act_pressure_needle" joint="pressure_needle" kp="200" ctrlrange="0 270"/>
+    <position name="act_power_btn" joint="power_btn" kp="1500" ctrlrange="0 0.004"/>
+    <position name="act_brew_btn" joint="brew_btn" kp="1500" ctrlrange="0 0.004"/>
+    <position name="act_steam_knob" joint="steam_knob_angle" kp="250" ctrlrange="0 120"/>
+    <position name="act_portafilter" joint="portafilter_lock" kp="250" ctrlrange="-60 60"/>
+    <position name="act_stream" joint="stream_extend" kp="1200" ctrlrange="0 0.11"/>
+  </actuator>
+
+  <!-- Joint order (nq=11):
+       tank_level, boiler_temp, pump_pressure, water_flow, cup_level,
+       pressure_needle, power_btn, brew_btn, steam_knob_angle,
+       portafilter_lock, stream_extend
+  -->
+  <keyframe>
+    <!-- ctrl order (nu=11) 与 actuator 声明顺序一致 -->
+    <key name="idle"
+         qpos="0.020 0.10 0.00 0.00 0.000  0   0.000 0.000 0   0   0.000"
+         ctrl="0.020 0.10 0.00 0.00 0.000  0   0.000 0.000 0   0   0.000"/>
+    <key name="fill_water"
+         qpos="0.070 0.10 0.00 0.00 0.000  0   0.004 0.000 0   0   0.000"
+         ctrl="0.070 0.10 0.00 0.00 0.000  0   0.004 0.000 0   0   0.000"/>
+    <key name="heat_up"
+         qpos="0.070 0.85 0.10 0.00 0.000  35  0.004 0.000 0   0   0.000"
+         ctrl="0.070 0.85 0.10 0.00 0.000  35  0.004 0.000 0   0   0.000"/>
+    <key name="brew"
+         qpos="0.065 0.90 0.92 0.70 0.030  210 0.004 0.004 10  0   0.110"
+         ctrl="0.065 0.90 0.92 0.70 0.030  210 0.004 0.004 10  0   0.110"/>
+    <key name="done"
+         qpos="0.060 0.85 0.05 0.00 0.035  10  0.004 0.000 0   0   0.000"
+         ctrl="0.060 0.85 0.05 0.00 0.035  10  0.004 0.000 0   0   0.000"/>
+  </keyframe>
+</mujoco>

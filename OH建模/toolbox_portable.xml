@@ -1,0 +1,162 @@
+<mujoco model="Portable Toolbox Silver">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.005" gravity="0 0 -9.81" density="1000" viscosity="0.1" integrator="RK4"/>
+
+  <!-- High Quality Visual Settings (4K, 60fps target) -->
+  <visual>
+    <!-- 1. Resolution: 4K (3840x2160) -->
+    <!-- 2. Shadow Quality: 8192 shadowsize, 8 samples for MSAA -->
+    <quality shadowsize="8192" offsamples="8"/>
+    <global fovy="45" offwidth="3840" offheight="2160" azimuth="150" elevation="-20"/>
+    <map shadowclip="0.5" shadowscale="0.5" zfar="100"/>
+    <!-- 3. Atmospheric Fog for depth -->
+    <rgba haze="0.15 0.25 0.35 1" fog="0 0 0 1"/>
+  </visual>
+
+  <statistic extent="2" center="0 0 0.5"/>
+
+  <default>
+    <geom condim="3" solref="0.004 1"/>
+    <joint damping="0.5" armature="0.01"/>
+  </default>
+
+  <asset>
+    <!-- High-Res Textures & PBR-like Materials -->
+    
+    <!-- Skybox for metallic reflections (Pseudo-HDR) -->
+    <texture type="skybox" builtin="gradient" rgb1="0.6 0.7 0.8" rgb2="0.1 0.15 0.2" width="2048" height="2048"/>
+    
+    <!-- Floor with high res checker -->
+    <texture type="2d" name="groundplane" builtin="checker" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" width="2048" height="2048" mark="edge" markrgb="0.8 0.8 0.8"/>
+    <material name="groundplane" texture="groundplane" texrepeat="5 5" reflectance="0.2" shininess="0.1"/>
+    
+    <!-- ================== NEW SILVER METAL MATERIALS ================== -->
+    <!-- 1. Silver Metal (Replacing Grey Plastic Lid) -->
+    <!-- RGB: ~192/255 = 0.75 -->
+    <!-- Metalness: High specular (0.9), High reflectance (0.7) -->
+    <!-- Roughness: 0.3 -> Shininess ~0.7 -->
+    <material name="mat_silver_metal" rgba="0.75 0.76 0.78 1" specular="0.9" shininess="0.7" reflectance="0.7"/>
+    
+    <!-- 2. Polished Metal Latch (Replacing Grey Latch) -->
+    <!-- Slightly brighter, smoother -->
+    <material name="mat_metal_latch" rgba="0.8 0.82 0.85 1" specular="1.0" shininess="0.9" reflectance="0.8"/>
+    
+    
+    <!-- Black Body: Rough plastic, low specular, subtle bumpiness (simulated via roughness) -->
+    <material name="mat_black_body" rgba="0.08 0.08 0.08 1" specular="0.3" shininess="0.1" reflectance="0.05"/>
+    
+    <!-- Handle: Glossy black plastic or painted metal -->
+    <material name="mat_handle_black" rgba="0.05 0.05 0.05 1" specular="0.7" shininess="0.8" reflectance="0.3"/>
+    
+    <!-- Red Text: Emissive/Bright paint -->
+    <material name="mat_red_text" rgba="0.8 0.1 0.1 1" specular="0.5" shininess="0.5" emission="0.2"/>
+    
+    <!-- Cloth Material (Cleaning Rag) -->
+    <material name="mat_rag" rgba="0.8 0.6 0.2 1" specular="0.05" shininess="0.1" reflectance="0.0"/>
+  </asset>
+
+  <worldbody>
+    <!-- Studio Lighting Setup (Global Illumination Approximation) -->
+    <!-- Key Light (Main source, casts shadows) -->
+    <light pos="2 -2 3" dir="-0.5 0.5 -1" diffuse="0.9 0.9 0.95" specular="0.5 0.5 0.5" castshadow="true" active="true"/>
+    
+    <!-- Fill Light (Softens shadows, warmer tone) -->
+    <light pos="-2 2 3" dir="0.5 -0.5 -1" diffuse="0.4 0.4 0.45" specular="0.2 0.2 0.2" castshadow="false" active="true"/>
+    
+    <!-- Rim Light (Backlight for edge definition) -->
+    <light pos="0 -3 2" dir="0 1 -0.5" diffuse="0.3 0.3 0.35" specular="0.8 0.8 0.8" castshadow="false" active="true"/>
+
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <!-- Portable Toolbox Grey -->
+    <body name="toolbox" pos="0 0 0.16">
+      <freejoint/>
+      
+      <!-- ================= MAIN BODY (Bottom Black Part) ================= -->
+      <!-- Size: Width 50cm (x=0.25), Depth 24cm (y=0.12), Height 16cm (z=0.08) -->
+      <geom name="body_base" type="box" size="0.25 0.12 0.08" pos="0 0 0" material="mat_black_body"/>
+      
+      <!-- Vertical Ribs on Body (Subtle vertical lines) -->
+      <geom name="body_rib_L1" type="box" size="0.005 0.122 0.07" pos="-0.20 0 0" material="mat_black_body"/>
+      <geom name="body_rib_L2" type="box" size="0.005 0.122 0.07" pos="-0.12 0 0" material="mat_black_body"/>
+      <geom name="body_rib_R1" type="box" size="0.005 0.122 0.07" pos="0.12 0 0" material="mat_black_body"/>
+      <geom name="body_rib_R2" type="box" size="0.005 0.122 0.07" pos="0.20 0 0" material="mat_black_body"/>
+
+
+      <!-- ================= LID (Silver Metal Part) ================= -->
+      <!-- Hinged at the back -->
+      <body name="lid" pos="0 0.12 0.08">
+        <!-- Locked lid to ensure it stays square and closed -->
+        <joint name="lid_hinge" axis="1 0 0" range="0 0" pos="0 0 0" stiffness="1000" springref="0"/>
+        
+        <!-- Lid Construction: Built from blocks to create the handle recess -->
+        <!-- Lid Height approx 8cm -->
+        
+        <!-- 1. Left Block -->
+        <geom name="lid_left" type="box" size="0.09 0.12 0.04" pos="-0.16 -0.12 0.04" material="mat_silver_metal"/>
+        
+        <!-- 2. Right Block -->
+        <geom name="lid_right" type="box" size="0.09 0.12 0.04" pos="0.16 -0.12 0.04" material="mat_silver_metal"/>
+        
+        <!-- 3. Front Strip (Thin strip connecting L and R in front of handle) -->
+        <geom name="lid_front" type="box" size="0.07 0.035 0.04" pos="0 -0.205 0.04" material="mat_silver_metal"/>
+        
+        <!-- 4. Back Strip (Behind handle) -->
+        <geom name="lid_back" type="box" size="0.07 0.035 0.04" pos="0 -0.035 0.04" material="mat_silver_metal"/>
+        
+        <!-- 5. Bottom Plate of the recess (Where text sits) -->
+        <geom name="lid_recess_floor" type="box" size="0.07 0.05 0.005" pos="0 -0.12 0.005" material="mat_silver_metal"/>
+        
+        <!-- "TOOL BOX" Label in the recess -->
+        <!-- Represented as a red plate since we can't do detailed text easily without textures -->
+        <geom name="label_plate" type="box" size="0.05 0.01 0.001" pos="0 -0.12 0.011" material="mat_red_text"/>
+        
+        <!-- Ribbing Texture on Top (Thin strips on the left and right blocks) -->
+        <!-- Left Side Ribs -->
+        <geom name="rib_L1" type="box" size="0.003 0.12 0.002" pos="-0.22 -0.12 0.082" material="mat_silver_metal"/>
+        <geom name="rib_L2" type="box" size="0.003 0.12 0.002" pos="-0.18 -0.12 0.082" material="mat_silver_metal"/>
+        <geom name="rib_L3" type="box" size="0.003 0.12 0.002" pos="-0.14 -0.12 0.082" material="mat_silver_metal"/>
+        <geom name="rib_L4" type="box" size="0.003 0.12 0.002" pos="-0.10 -0.12 0.082" material="mat_silver_metal"/>
+        
+        <!-- Right Side Ribs -->
+        <geom name="rib_R1" type="box" size="0.003 0.12 0.002" pos="0.22 -0.12 0.082" material="mat_silver_metal"/>
+        <geom name="rib_R2" type="box" size="0.003 0.12 0.002" pos="0.18 -0.12 0.082" material="mat_silver_metal"/>
+        <geom name="rib_R3" type="box" size="0.003 0.12 0.002" pos="0.14 -0.12 0.082" material="mat_silver_metal"/>
+        <geom name="rib_R4" type="box" size="0.003 0.12 0.002" pos="0.10 -0.12 0.082" material="mat_silver_metal"/>
+
+
+        <!-- ================= HANDLE ================= -->
+        <!-- Rectangular Black Handle, pivoting, Standing Up by default -->
+        <body name="handle" pos="0 -0.07 0.06" euler="-90 0 0">
+            <!-- Spring stiffness keeps it upright -->
+            <joint name="handle_hinge" axis="1 0 0" range="-90 90" stiffness="1" springref="0"/>
+            <!-- Top Bar -->
+            <geom name="h_top" type="box" size="0.06 0.01 0.01" pos="0 -0.06 0" material="mat_handle_black"/>
+            <!-- Side Legs -->
+            <geom name="h_leg_L" type="box" size="0.008 0.03 0.01" pos="-0.052 -0.03 0" material="mat_handle_black"/>
+            <geom name="h_leg_R" type="box" size="0.008 0.03 0.01" pos="0.052 -0.03 0" material="mat_handle_black"/>
+        </body>
+
+      </body>
+
+      <!-- ================= LATCHES ================= -->
+      <!-- Silver Metal Latches -->
+      <!-- Left Latch -->
+      <body name="latch_L" pos="-0.15 -0.12 0.06">
+        <!-- Base attached to lid/body area (Visual) -->
+        <geom name="latch_L_base" type="box" size="0.025 0.008 0.025" pos="0 -0.005 0" material="mat_metal_latch"/>
+        <!-- The lever part -->
+        <geom name="latch_L_lever" type="box" size="0.02 0.005 0.01" pos="0 -0.01 -0.01" material="mat_metal_latch"/>
+      </body>
+      
+      <!-- Right Latch -->
+      <body name="latch_R" pos="0.15 -0.12 0.06">
+        <geom name="latch_R_base" type="box" size="0.025 0.008 0.025" pos="0 -0.005 0" material="mat_metal_latch"/>
+        <geom name="latch_R_lever" type="box" size="0.02 0.005 0.01" pos="0 -0.01 -0.01" material="mat_metal_latch"/>
+      </body>
+
+    </body>
+    
+
+  </worldbody>
+</mujoco>

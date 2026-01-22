@@ -1,0 +1,122 @@
+<mujoco model="robot_vacuum_v3_advanced">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true" autolimits="true"/>
+  <option timestep="0.005" gravity="0 0 -9.81"/>
+
+  <visual>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2"/>
+    <rgba haze="0.85 0.88 0.92 1"/>
+    <global offwidth="1280" offheight="720"/>
+  </visual>
+
+  <asset>
+    <texture name="tex_floor" type="2d" builtin="checker" rgb1="0.8 0.8 0.8" rgb2="0.9 0.9 0.9" width="512" height="512" mark="edge" markrgb="0.6 0.6 0.6"/>
+    <material name="mat_floor" texture="tex_floor" texrepeat="10 10" reflectance="0.1"/>
+    <material name="mat_wall" rgba="0.7 0.7 0.7 1" reflectance="0.2"/>
+    <material name="mat_obstacle" rgba="0.8 0.3 0.3 1" reflectance="0.5"/>
+    <material name="mat_robot_body" rgba="0.95 0.95 0.95 1" reflectance="0.7" shininess="0.9"/>
+    <material name="mat_robot_dark" rgba="0.1 0.1 0.1 1" reflectance="0.3"/>
+    <material name="mat_robot_light" rgba="0.2 0.8 1.0 1" emission="0.5"/>
+    <material name="mat_charger" rgba="0.2 0.8 0.2 1" emission="0.3"/>
+    <material name="mat_bumper" rgba="0.3 0.3 0.3 1" reflectance="0.1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 5" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
+    <geom name="floor" type="plane" pos="0 0 0" size="5 5 0.1" material="mat_floor"/>
+    
+    <!-- Walls -->
+    <geom name="wall_n" type="box" pos="0 5 0.5" size="5 0.1 0.5" material="mat_wall"/>
+    <geom name="wall_s" type="box" pos="0 -5 0.5" size="5 0.1 0.5" material="mat_wall"/>
+    <geom name="wall_e" type="box" pos="5 0 0.5" size="0.1 5 0.5" material="mat_wall"/>
+    <geom name="wall_w" type="box" pos="-5 0 0.5" size="0.1 5 0.5" material="mat_wall"/>
+
+    <!-- Charging Station (Visual Target) -->
+    <body name="charger" pos="-4.5 -4.5 0">
+        <geom name="charger_base" type="box" pos="0 0 0.1" size="0.2 0.2 0.1" material="mat_charger"/>
+        <geom name="charger_tower" type="box" pos="-0.1 0 0.3" size="0.1 0.2 0.3" material="mat_charger"/>
+        <site name="docking_port" pos="0.2 0 0.1" size="0.05" rgba="1 1 0 0.5"/>
+    </body>
+
+    <!-- Obstacles (Complex Layout) -->
+    <geom name="obs1" type="box" pos="2 2 0.25" size="0.5 0.5 0.25" material="mat_obstacle"/>
+    <geom name="obs2" type="cylinder" pos="-2 3 0.25" size="0.4 0.25" material="mat_obstacle"/>
+    <geom name="obs3" type="box" pos="-1 -2 0.25" size="1 0.2 0.25" euler="0 0 45" material="mat_obstacle"/>
+    <geom name="obs4" type="box" pos="3 -3 0.25" size="0.3 0.3 0.25" material="mat_obstacle"/>
+    <geom name="obs5" type="cylinder" pos="0 0 0.25" size="0.3 0.25" material="mat_obstacle"/>
+
+    <!-- Robot Vacuum V3 (Advanced) -->
+    <body name="robot" pos="-4.0 -4.0 0.02" euler="0 0 0">
+      <freejoint/>
+      
+      <!-- Chassis -->
+      <geom name="chassis" type="cylinder" pos="0 0 0.06" size="0.18 0.04" material="mat_robot_body" mass="3"/>
+      <geom name="lidar_tower" type="cylinder" pos="0 0 0.11" size="0.05 0.02" material="mat_robot_dark"/>
+      <geom name="eye" type="box" pos="0.16 0 0.06" size="0.01 0.03 0.01" material="mat_robot_light"/>
+
+      <!-- Bumper (Collision Sensor) -->
+      <body name="bumper_front" pos="0.19 0 0.06">
+          <geom name="bumper_geom" type="box" size="0.01 0.12 0.03" material="mat_bumper" solimp="0.9 0.95 0.001" solref="0.02 1"/>
+          <site name="touch_bumper" pos="0 0 0" size="0.13 0.04 0.04" type="box" rgba="1 0 0 0"/> 
+      </body>
+
+      <!-- 4-Wheel Drive System (Based on smart_car) -->
+      <!-- Front Left -->
+      <body name="wheel_fl" pos="0.12 0.16 0.05" euler="-90 0 0">
+        <joint name="joint_fl" type="hinge" axis="0 0 1" damping="0.1"/>
+        <geom name="geom_wheel_fl" type="cylinder" size="0.05 0.015" material="mat_robot_dark" friction="1.0"/>
+      </body>
+      <!-- Front Right -->
+      <body name="wheel_fr" pos="0.12 -0.16 0.05" euler="-90 0 0">
+        <joint name="joint_fr" type="hinge" axis="0 0 1" damping="0.1"/>
+        <geom name="geom_wheel_fr" type="cylinder" size="0.05 0.015" material="mat_robot_dark" friction="1.0"/>
+      </body>
+      <!-- Back Left -->
+      <body name="wheel_bl" pos="-0.12 0.16 0.05" euler="-90 0 0">
+        <joint name="joint_bl" type="hinge" axis="0 0 1" damping="0.1"/>
+        <geom name="geom_wheel_bl" type="cylinder" size="0.05 0.015" material="mat_robot_dark" friction="1.0"/>
+      </body>
+      <!-- Back Right -->
+      <body name="wheel_br" pos="-0.12 -0.16 0.05" euler="-90 0 0">
+        <joint name="joint_br" type="hinge" axis="0 0 1" damping="0.1"/>
+        <geom name="geom_wheel_br" type="cylinder" size="0.05 0.015" material="mat_robot_dark" friction="1.0"/>
+      </body>
+
+      <!-- Sensors Sites -->
+      <!-- 5-Direction Lidar for better mapping -->
+      <site name="s_lidar_0" pos="0.19 0 0.11" zaxis="1 0 0" size="0.005" rgba="1 0 0 1"/>     <!-- Front -->
+      <site name="s_lidar_l30" pos="0.18 0.1 0.11" zaxis="0.866 0.5 0" size="0.005" rgba="1 0 0 1"/> <!-- Left 30 -->
+      <site name="s_lidar_r30" pos="0.18 -0.1 0.11" zaxis="0.866 -0.5 0" size="0.005" rgba="1 0 0 1"/> <!-- Right 30 -->
+      <site name="s_lidar_l90" pos="0 0.19 0.11" zaxis="0 1 0" size="0.005" rgba="1 0 0 1"/>   <!-- Left 90 -->
+      <site name="s_lidar_r90" pos="0 -0.19 0.11" zaxis="0 -1 0" size="0.005" rgba="1 0 0 1"/>   <!-- Right 90 -->
+      
+      <!-- Camera for Visual Recognition -->
+      <camera name="robot_cam" pos="0.18 0 0.15" euler="0 0 0" fovy="90"/>
+      
+      <!-- Cliff Sensors -->
+      <site name="s_cliff_f" pos="0.19 0 0.02" zaxis="0 0 -1" size="0.005" rgba="0 0 1 1"/>
+      <site name="s_cliff_l" pos="0.1 0.15 0.02" zaxis="0 0 -1" size="0.005" rgba="0 0 1 1"/>
+      <site name="s_cliff_r" pos="0.1 -0.15 0.02" zaxis="0 0 -1" size="0.005" rgba="0 0 1 1"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="act_fl" joint="joint_fl" gear="50" ctrlrange="-1 1"/>
+    <motor name="act_fr" joint="joint_fr" gear="50" ctrlrange="-1 1"/>
+    <motor name="act_bl" joint="joint_bl" gear="50" ctrlrange="-1 1"/>
+    <motor name="act_br" joint="joint_br" gear="50" ctrlrange="-1 1"/>
+  </actuator>
+
+  <sensor>
+    <rangefinder name="lidar_0" site="s_lidar_0"/>
+    <rangefinder name="lidar_l30" site="s_lidar_l30"/>
+    <rangefinder name="lidar_r30" site="s_lidar_r30"/>
+    <rangefinder name="lidar_l90" site="s_lidar_l90"/>
+    <rangefinder name="lidar_r90" site="s_lidar_r90"/>
+    
+    <rangefinder name="cliff_f" site="s_cliff_f"/>
+    <rangefinder name="cliff_l" site="s_cliff_l"/>
+    <rangefinder name="cliff_r" site="s_cliff_r"/>
+    
+    <touch name="bumper_touch" site="touch_bumper"/>
+  </sensor>
+</mujoco>

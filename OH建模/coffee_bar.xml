@@ -1,0 +1,192 @@
+<mujoco model="coffee_bar">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true" autolimits="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <visual>
+    <!-- Professional Grade Optimization -->
+    <headlight ambient="0.3 0.3 0.35" diffuse="0.4 0.4 0.45" specular="0.1 0.1 0.1"/>
+    <rgba haze="0.85 0.88 0.92 1"/>
+    <global offwidth="3840" offheight="2160" fovy="45"/>
+    <quality shadowsize="4096" offsamples="8"/>
+    <map znear="0.01" zfar="100" shadowscale="0.5"/>
+  </visual>
+
+  <statistic extent="4" center="0 0 1"/>
+
+  <asset>
+    <!-- Textures -->
+    <texture name="tex_floor" type="2d" builtin="flat" rgb1="0.85 0.85 0.83" width="512" height="512"/>
+    <texture name="tex_metal_dark" type="2d" builtin="flat" rgb1="0.15 0.15 0.16" width="512" height="512"/>
+    
+    <!-- Materials -->
+    <material name="mat_floor" texture="tex_floor" reflectance="0.15" shininess="0.4" specular="0.2"/>
+    <material name="mat_frame" texture="tex_metal_dark" reflectance="0.3" shininess="0.6" specular="0.5"/>
+    <material name="mat_bulb" rgba="1 1 0.95 1" emission="5.0" reflectance="0.0"/> 
+
+    <!-- Coffee Bar Materials -->
+    <texture name="tex_wood_light" type="2d" builtin="flat" rgb1="0.82 0.7 0.55" width="512" height="512"/> 
+    <material name="mat_wood_light" texture="tex_wood_light" reflectance="0.2" shininess="0.1"/>
+    <material name="mat_counter_top" rgba="0.92 0.92 0.93 1" reflectance="0.4" shininess="0.6"/>
+    
+    <!-- Realistic Stool Materials -->
+    <material name="mat_chrome" rgba="0.9 0.9 0.95 1" reflectance="0.9" shininess="1.0" specular="1.0"/>
+    <material name="mat_leather_black" rgba="0.1 0.1 0.1 1" reflectance="0.15" shininess="0.4" specular="0.2"/>
+    <material name="mat_leather_red" rgba="0.6 0.1 0.1 1" reflectance="0.15" shininess="0.4" specular="0.2"/>
+    
+    <!-- Realistic Lamp Materials -->
+    <material name="mat_lamp_glass_clear" rgba="0.9 0.95 1.0 0.2" reflectance="0.9" shininess="1.0" specular="0.9"/>
+    <material name="mat_lamp_filament" rgba="1.0 0.8 0.4 1" emission="8.0" reflectance="0.0"/>
+    <material name="mat_lamp_cord" rgba="0.1 0.1 0.1 1" reflectance="0.05" shininess="0.1"/>
+  </asset>
+
+  <worldbody>
+    <!-- Lighting -->
+    <light name="sun" pos="5 -10 15" dir="-0.3 0.6 -1" diffuse="0.9 0.88 0.82" specular="0.3 0.3 0.3" castshadow="true" cutoff="60"/>
+    <light name="fill_sky" pos="-5 5 10" dir="0.5 -0.5 -1" diffuse="0.2 0.25 0.35" specular="0.0 0.0 0.0" castshadow="false"/>
+
+    <!-- Floor -->
+    <geom name="floor" type="plane" pos="0 0 0" size="0 0 0.1" material="mat_floor"/>
+
+    <!-- COFFEE BAR COMPONENTS (Centered) -->
+    
+     <body name="coffee_bar" pos="0 0 0">
+         <!-- Main Section (Extended to 5m) -->
+         <geom name="bar_body" type="box" pos="0 0 0.525" size="2.5 0.4 0.525" material="mat_wood_light"/>
+         <geom name="bar_top" type="box" pos="0 0.05 1.075" size="2.55 0.45 0.025" material="mat_counter_top"/>
+         
+         <!-- L-Return Section (Left Side, extending forward) -->
+         <!-- Attached at X = -2.5. Extends towards -Y. -->
+         <!-- Center X: -2.5 + 0.4 = -2.1. Center Y: -0.4 - 1.0 = -1.4. -->
+         <geom name="bar_return_body" type="box" pos="-2.1 -1.4 0.525" size="0.4 1.0 0.525" material="mat_wood_light"/>
+         <geom name="bar_return_top" type="box" pos="-2.15 -1.45 1.075" size="0.45 1.05 0.025" material="mat_counter_top"/>
+
+         <!-- Bar Foot Rail (L-Shaped) -->
+         <!-- Main Rail: Runs along Y=-0.4 face. From X=-1.7 (inside corner) to X=2.5 -->
+         <geom name="bar_rail_main" type="cylinder" pos="0.4 -0.45 0.2" size="0.02 2.1" euler="0 90 0" material="mat_chrome"/>
+         <!-- Return Rail: Runs along X=-2.5 face. From Y=-0.4 to Y=-2.4 -->
+         <geom name="bar_rail_return" type="cylinder" pos="-2.55 -1.4 0.2" size="0.02 1.0" euler="90 0 0" material="mat_chrome"/>
+         
+         <!-- Rail Supports -->
+         <geom name="rail_sup_m1" type="cylinder" pos="-1.5 -0.42 0.2" size="0.01 0.04" euler="90 0 0" material="mat_chrome"/>
+         <geom name="rail_sup_m2" type="cylinder" pos="0.5 -0.42 0.2" size="0.01 0.04" euler="90 0 0" material="mat_chrome"/>
+         <geom name="rail_sup_m3" type="cylinder" pos="2.4 -0.42 0.2" size="0.01 0.04" euler="90 0 0" material="mat_chrome"/>
+         
+         <geom name="rail_sup_r1" type="cylinder" pos="-2.52 -0.5 0.2" size="0.01 0.04" euler="0 90 0" material="mat_chrome"/>
+         <geom name="rail_sup_r2" type="cylinder" pos="-2.52 -1.4 0.2" size="0.01 0.04" euler="0 90 0" material="mat_chrome"/>
+         <geom name="rail_sup_r3" type="cylinder" pos="-2.52 -2.3 0.2" size="0.01 0.04" euler="0 90 0" material="mat_chrome"/>
+     </body>
+ 
+     <body name="back_bar" pos="0 1.7 0">
+         <geom name="cabinet_body" type="box" pos="0 0 0.45" size="2.0 0.3 0.45" material="mat_wood_light"/>
+         <geom name="cabinet_top" type="box" pos="0 0 0.92" size="2.0 0.32 0.02" material="mat_counter_top"/>
+         <geom name="shelf_1" type="box" pos="0 0.2 1.6" size="2.0 0.1 0.02" material="mat_wood_light"/>
+         <geom name="shelf_2" type="box" pos="0 0.2 2.1" size="2.0 0.1 0.02" material="mat_wood_light"/>
+    </body>
+ 
+     <body name="stools" pos="0 -0.8 0">
+          <!-- Main Section Stools (Shifted Right) -->
+          <!-- Realistic Rotating Stool 1 -->
+          <body name="stool1" pos="-0.5 0 0" euler="0 0 15">
+             <!-- Chrome Base -->
+             <geom name="s1_base_disk" type="cylinder" pos="0 0 0.01" size="0.2 0.01" material="mat_chrome"/>
+             <geom name="s1_column_main" type="cylinder" pos="0 0 0.35" size="0.03 0.35" material="mat_chrome"/>
+             
+             <!-- Footrest Ring -->
+             <geom name="s1_footrest_ring" type="cylinder" pos="0 0 0.2" size="0.15 0.01" material="mat_chrome" group="1"/> <!-- Visual simplification -->
+             <!-- Detailed Footrest Spokes (Optional, simplified as cross bar for performance/simplicity) -->
+             <geom name="s1_footrest_cross" type="box" pos="0 0 0.2" size="0.15 0.01 0.005" material="mat_chrome"/>
+
+             <!-- Seat Support Mechanism -->
+             <geom name="s1_seat_support" type="cylinder" pos="0 0 0.71" size="0.08 0.02" material="mat_chrome"/>
+             
+             <!-- Curved Seat (Using composite shapes for ergonomic look) -->
+             <!-- Base Seat Cushion -->
+             <geom name="s1_seat_base" type="cylinder" pos="0 0 0.75" size="0.18 0.04" material="mat_leather_black"/>
+             <!-- Low Backrest (Curved box approximation) - Flipped to -0.14 to face bar -->
+             <geom name="s1_backrest" type="box" pos="0 -0.14 0.85" size="0.12 0.02 0.08" material="mat_leather_black"/>
+          </body>
+
+          <!-- Realistic Rotating Stool 2 -->
+          <body name="stool2" pos="1.0 0 0" euler="0 0 -10">
+             <geom name="s2_base_disk" type="cylinder" pos="0 0 0.01" size="0.2 0.01" material="mat_chrome"/>
+             <geom name="s2_column_main" type="cylinder" pos="0 0 0.35" size="0.03 0.35" material="mat_chrome"/>
+             <geom name="s2_footrest_ring" type="cylinder" pos="0 0 0.2" size="0.15 0.01" material="mat_chrome" group="1"/>
+             <geom name="s2_footrest_cross" type="box" pos="0 0 0.2" size="0.15 0.01 0.005" material="mat_chrome"/>
+             <geom name="s2_seat_support" type="cylinder" pos="0 0 0.71" size="0.08 0.02" material="mat_chrome"/>
+             <geom name="s2_seat_base" type="cylinder" pos="0 0 0.75" size="0.18 0.04" material="mat_leather_black"/>
+             <geom name="s2_backrest" type="box" pos="0 -0.14 0.85" size="0.12 0.02 0.08" material="mat_leather_black"/>
+          </body>
+
+          <!-- Realistic Rotating Stool 3 -->
+          <body name="stool3" pos="2.5 0 0" euler="0 0 5">
+             <geom name="s3_base_disk" type="cylinder" pos="0 0 0.01" size="0.2 0.01" material="mat_chrome"/>
+             <geom name="s3_column_main" type="cylinder" pos="0 0 0.35" size="0.03 0.35" material="mat_chrome"/>
+             <geom name="s3_footrest_ring" type="cylinder" pos="0 0 0.2" size="0.15 0.01" material="mat_chrome" group="1"/>
+             <geom name="s3_footrest_cross" type="box" pos="0 0 0.2" size="0.15 0.01 0.005" material="mat_chrome"/>
+             <geom name="s3_seat_support" type="cylinder" pos="0 0 0.71" size="0.08 0.02" material="mat_chrome"/>
+             <geom name="s3_seat_base" type="cylinder" pos="0 0 0.75" size="0.18 0.04" material="mat_leather_black"/>
+             <geom name="s3_backrest" type="box" pos="0 -0.14 0.85" size="0.12 0.02 0.08" material="mat_leather_black"/>
+          </body>
+          
+          <!-- Return Section Stools (Facing Right/East) -->
+          <!-- Pos X = -3.0 (Left of return bar at -2.5) -->
+          <!-- Pos Y = -1.0 and -2.0 -->
+          <!-- Rotate 90 degrees to face the return bar (East) -->
+          
+          <body name="stool4" pos="-1.3 -0.4 0" euler="0 0 90">
+              <geom name="s4_base_disk" type="cylinder" pos="0 0 0.01" size="0.2 0.01" material="mat_chrome"/>
+              <geom name="s4_column_main" type="cylinder" pos="0 0 0.35" size="0.03 0.35" material="mat_chrome"/>
+              <geom name="s4_footrest_ring" type="cylinder" pos="0 0 0.2" size="0.15 0.01" material="mat_chrome" group="1"/>
+              <geom name="s4_footrest_cross" type="box" pos="0 0 0.2" size="0.15 0.01 0.005" material="mat_chrome"/>
+              <geom name="s4_seat_support" type="cylinder" pos="0 0 0.71" size="0.08 0.02" material="mat_chrome"/>
+              <geom name="s4_seat_base" type="cylinder" pos="0 0 0.75" size="0.18 0.04" material="mat_leather_black"/>
+              <geom name="s4_backrest" type="box" pos="0 -0.14 0.85" size="0.12 0.02 0.08" material="mat_leather_black"/>
+           </body>
+           
+           <body name="stool5" pos="-1.3 -1.4 0" euler="0 0 80">
+              <geom name="s5_base_disk" type="cylinder" pos="0 0 0.01" size="0.2 0.01" material="mat_chrome"/>
+              <geom name="s5_column_main" type="cylinder" pos="0 0 0.35" size="0.03 0.35" material="mat_chrome"/>
+             <geom name="s5_footrest_ring" type="cylinder" pos="0 0 0.2" size="0.15 0.01" material="mat_chrome" group="1"/>
+             <geom name="s5_footrest_cross" type="box" pos="0 0 0.2" size="0.15 0.01 0.005" material="mat_chrome"/>
+             <geom name="s5_seat_support" type="cylinder" pos="0 0 0.71" size="0.08 0.02" material="mat_chrome"/>
+             <geom name="s5_seat_base" type="cylinder" pos="0 0 0.75" size="0.18 0.04" material="mat_leather_black"/>
+             <geom name="s5_backrest" type="box" pos="0 -0.14 0.85" size="0.12 0.02 0.08" material="mat_leather_black"/>
+          </body>
+     </body>
+
+     <body name="bar_light_1" pos="-0.5 0.0 2.5">
+        <geom name="b_cord1" type="cylinder" pos="0 0 1.0" size="0.003 1.0" material="mat_lamp_cord"/>
+        <geom name="b_shade_neck1" type="cylinder" pos="0 0 0.15" size="0.04 0.05" material="mat_frame"/>
+        <geom name="b_shade_body1" type="ellipsoid" pos="0 0 0.05" size="0.25 0.25 0.1" material="mat_frame"/>
+        <geom name="b_bulb_glass1" type="sphere" pos="0 0 -0.05" size="0.08" material="mat_lamp_glass_clear"/>
+        <geom name="b_filament1" type="capsule" pos="0 0 -0.05" size="0.01 0.03" material="mat_lamp_filament"/>
+        <light name="b_light1" pos="0 0 -0.05" dir="0 0 -1" diffuse="1.0 0.9 0.7" attenuation="0.8 0 0.1" castshadow="true"/>
+    </body>
+    <body name="bar_light_2" pos="1.0 0.0 2.5">
+        <geom name="b_cord2" type="cylinder" pos="0 0 1.0" size="0.003 1.0" material="mat_lamp_cord"/>
+        <geom name="b_shade_neck2" type="cylinder" pos="0 0 0.15" size="0.04 0.05" material="mat_frame"/>
+        <geom name="b_shade_body2" type="ellipsoid" pos="0 0 0.05" size="0.25 0.25 0.1" material="mat_frame"/>
+        <geom name="b_bulb_glass2" type="sphere" pos="0 0 -0.05" size="0.08" material="mat_lamp_glass_clear"/>
+        <geom name="b_filament2" type="capsule" pos="0 0 -0.05" size="0.01 0.03" material="mat_lamp_filament"/>
+        <light name="b_light2" pos="0 0 -0.05" dir="0 0 -1" diffuse="1.0 0.9 0.7" attenuation="0.8 0 0.1" castshadow="true"/>
+    </body>
+    <body name="bar_light_3" pos="2.5 0.0 2.5">
+        <geom name="b_cord3" type="cylinder" pos="0 0 1.0" size="0.003 1.0" material="mat_lamp_cord"/>
+        <geom name="b_shade_neck3" type="cylinder" pos="0 0 0.15" size="0.04 0.05" material="mat_frame"/>
+        <geom name="b_shade_body3" type="ellipsoid" pos="0 0 0.05" size="0.25 0.25 0.1" material="mat_frame"/>
+        <geom name="b_bulb_glass3" type="sphere" pos="0 0 -0.05" size="0.08" material="mat_lamp_glass_clear"/>
+        <geom name="b_filament3" type="capsule" pos="0 0 -0.05" size="0.01 0.03" material="mat_lamp_filament"/>
+        <light name="b_light3" pos="0 0 -0.05" dir="0 0 -1" diffuse="1.0 0.9 0.7" attenuation="0.8 0 0.1" castshadow="true"/>
+    </body>
+    <!-- New Light for Return Section -->
+    <body name="bar_light_4" pos="-2.1 -1.4 2.5">
+        <geom name="b_cord4" type="cylinder" pos="0 0 1.0" size="0.003 1.0" material="mat_lamp_cord"/>
+        <geom name="b_shade_neck4" type="cylinder" pos="0 0 0.15" size="0.04 0.05" material="mat_frame"/>
+        <geom name="b_shade_body4" type="ellipsoid" pos="0 0 0.05" size="0.25 0.25 0.1" material="mat_frame"/>
+        <geom name="b_bulb_glass4" type="sphere" pos="0 0 -0.05" size="0.08" material="mat_lamp_glass_clear"/>
+        <geom name="b_filament4" type="capsule" pos="0 0 -0.05" size="0.01 0.03" material="mat_lamp_filament"/>
+        <light name="b_light4" pos="0 0 -0.05" dir="0 0 -1" diffuse="1.0 0.9 0.7" attenuation="0.8 0 0.1" castshadow="true"/>
+    </body>
+
+  </worldbody>
+</mujoco>

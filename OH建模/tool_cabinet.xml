@@ -1,0 +1,112 @@
+<mujoco model="tool_cabinet">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4"/>
+  
+  <visual>
+    <headlight ambient="0.3 0.3 0.3" diffuse="0.6 0.6 0.6" specular="0.1 0.1 0.1"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <quality shadowsize="4096"/>
+    <global offwidth="3840" offheight="2160"/> <!-- 4K Rendering Hint -->
+  </visual>
+
+  <default>
+    <geom type="box" rgba="0.8 0.8 0.8 1" friction="1 0.5 0.5"/>
+    <joint damping="1" stiffness="0"/>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" width="512" height="512" mark="edge" markrgb="0.8 0.8 0.8"/>
+    <material name="groundplane" texture="groundplane" texrepeat="2 2" texuniform="true" reflectance="0.2"/>
+    
+    <!-- 1. Color Adjustment: High reflection silver metal -->
+    <material name="silver_metal" rgba="0.9 0.92 0.95 1" shininess="0.9" specular="1.0" reflectance="0.7"/>
+    
+    <!-- 2. Door Processing: Moderate saturation blue (RGB 0 100 200 -> 0 0.39 0.78) -->
+    <material name="door_blue" rgba="0.0 0.392 0.784 1" shininess="0.6" specular="0.7" reflectance="0.3"/>
+
+    <material name="glass" rgba="0.8 0.9 1 0.3" shininess="0.9" specular="0.9" reflectance="0.2"/>
+    <material name="glass_blue" rgba="0.0 0.392 0.784 0.5" shininess="0.9" specular="0.9" reflectance="0.4"/>
+    
+    <material name="tool_red" rgba="0.8 0.2 0.2 1"/>
+    <material name="tool_blue" rgba="0.2 0.2 0.8 1"/>
+    <material name="tool_yellow" rgba="0.8 0.8 0.2 1"/>
+    <material name="handle_metal" rgba="0.2 0.2 0.2 1" shininess="0.5"/>
+  </asset>
+
+  <worldbody>
+    <!-- 4. Lighting Optimization: Adjusted for better highlights and shadows -->
+    <light pos="2 2 4" dir="-0.5 -0.5 -1" castshadow="true" diffuse="0.8 0.8 0.8" specular="0.5 0.5 0.5"/>
+    <light pos="-2 -2 4" dir="0.5 0.5 -1" castshadow="false" diffuse="0.4 0.4 0.4" specular="0.2 0.2 0.2"/>
+    
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" pos="0 0 0"/>
+
+    <!-- Cabinet Body (Silver) -->
+    <body name="cabinet" pos="0 0 0">
+      <!-- Back Wall -->
+      <geom name="back_wall" size="0.5 0.02 0.9" pos="0 -0.25 0.9" material="silver_metal"/>
+      <!-- Left Wall -->
+      <geom name="left_wall" size="0.02 0.25 0.9" pos="-0.48 0 0.9" material="silver_metal"/>
+      <!-- Right Wall -->
+      <geom name="right_wall" size="0.02 0.25 0.9" pos="0.48 0 0.9" material="silver_metal"/>
+      <!-- Top -->
+      <geom name="top" size="0.5 0.27 0.02" pos="0 0 1.82" material="silver_metal"/>
+      <!-- Bottom -->
+      <geom name="bottom" size="0.5 0.27 0.02" pos="0 0 0.02" material="silver_metal"/>
+
+      <!-- Shelves -->
+      <geom name="shelf_1" size="0.46 0.23 0.01" pos="0 0 0.4" material="silver_metal"/>
+      <geom name="shelf_2" size="0.46 0.23 0.01" pos="0 0 0.8" material="silver_metal"/>
+      <geom name="shelf_3" size="0.46 0.23 0.01" pos="0 0 1.2" material="silver_metal"/>
+      <geom name="shelf_4" size="0.46 0.23 0.01" pos="0 0 1.55" material="silver_metal"/>
+
+      <!-- Left Door (Blue) -->
+      <body name="left_door" pos="-0.48 0.25 0.9">
+        <joint name="left_hinge" axis="0 0 1" pos="0 0 0" range="0 135"/>
+        <!-- Frame - Using door_blue -->
+        <geom name="ld_left_frame" size="0.04 0.02 0.9" pos="0.04 0 0" material="door_blue"/> 
+        <geom name="ld_right_frame" size="0.04 0.02 0.9" pos="0.46 0 0" material="door_blue"/>
+        <geom name="ld_top_frame" size="0.25 0.02 0.04" pos="0.25 0 0.86" material="door_blue"/>
+        <geom name="ld_bottom_frame" size="0.25 0.02 0.04" pos="0.25 0 -0.86" material="door_blue"/>
+        <!-- Glass -->
+        <geom name="ld_glass" type="box" size="0.2 0.005 0.82" pos="0.25 0 0" material="glass_blue"/>
+        <!-- Handle -->
+        <geom name="ld_handle" type="box" size="0.01 0.03 0.05" pos="0.44 0.05 0" material="handle_metal"/>
+      </body>
+
+      <!-- Right Door (Blue) -->
+      <body name="right_door" pos="0.48 0.25 0.9">
+        <joint name="right_hinge" axis="0 0 1" pos="0 0 0" range="-135 0"/>
+        <!-- Frame - Using door_blue -->
+        <geom name="rd_right_frame" size="0.04 0.02 0.9" pos="-0.04 0 0" material="door_blue"/>
+        <geom name="rd_left_frame" size="0.04 0.02 0.9" pos="-0.46 0 0" material="door_blue"/>
+        <geom name="rd_top_frame" size="0.25 0.02 0.04" pos="-0.25 0 0.86" material="door_blue"/>
+        <geom name="rd_bottom_frame" size="0.25 0.02 0.04" pos="-0.25 0 -0.86" material="door_blue"/>
+        <!-- Glass -->
+        <geom name="rd_glass" type="box" size="0.2 0.005 0.82" pos="-0.25 0 0" material="glass_blue"/>
+        <!-- Handle -->
+        <geom name="rd_handle" type="box" size="0.01 0.03 0.05" pos="-0.44 0.05 0" material="handle_metal"/>
+      </body>
+
+      <!-- Tools/Items -->
+      <body name="tools" pos="0 0 0">
+         <!-- Shelf 1 Items -->
+         <geom name="tool_box_1" type="box" size="0.1 0.08 0.05" pos="-0.2 0 0.46" material="tool_blue"/>
+         <geom name="tool_box_2" type="box" size="0.1 0.08 0.05" pos="0.2 0 0.46" material="tool_red"/>
+         
+         <!-- Shelf 2 Items -->
+         <geom name="wrench_set" type="box" size="0.15 0.1 0.02" pos="0 0 0.83" material="silver_metal"/>
+         <geom name="can_1" type="cylinder" size="0.04 0.06" pos="-0.3 0 0.86" material="tool_yellow"/>
+         
+         <!-- Shelf 3 Items -->
+         <geom name="helmet" type="sphere" size="0.1" pos="0.2 0 1.3" material="tool_yellow"/>
+      </body>
+
+    </body>
+  </worldbody>
+  
+  <actuator>
+      <position name="open_left" joint="left_hinge" kp="100" kv="10"/>
+      <position name="open_right" joint="right_hinge" kp="100" kv="10"/>
+  </actuator>
+</mujoco>

@@ -1,0 +1,127 @@
+<mujoco model="cafe_table_set">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true" autolimits="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <!-- Visual Quality Optimization -->
+  <visual>
+    <global offwidth="3840" offheight="2160" fovy="45"/>
+    <quality shadowsize="4096" offsamples="8"/>
+    <headlight ambient="0.3 0.3 0.3" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1"/>
+    <map znear="0.01" zfar="100" shadowscale="0.5"/>
+  </visual>
+
+  <statistic extent="4" center="0 0 1"/>
+
+  <asset>
+    <!-- Light wood texture for table top and chair backs -->
+    <texture name="tex_wood_light" type="2d" builtin="flat" rgb1="0.88 0.78 0.55" width="1024" height="1024"/>
+    <material name="mat_wood_light" texture="tex_wood_light" reflectance="0.3" shininess="0.2" specular="0.2"/>
+    
+    <!-- White metal for table base -->
+    <texture name="tex_white" type="2d" builtin="flat" rgb1="0.96 0.96 0.96" width="1024" height="1024"/>
+    <material name="mat_white_metal" texture="tex_white" reflectance="0.5" shininess="0.6" specular="0.5"/>
+
+    <!-- Cream cushion for chairs -->
+    <texture name="tex_fabric_cream" type="2d" builtin="flat" rgb1="0.96 0.93 0.88" width="1024" height="1024"/>
+    <material name="mat_cushion_cream" texture="tex_fabric_cream" reflectance="0.1" shininess="0.1"/>
+
+    <!-- Dark Metal/Brass for chair frame details -->
+    <material name="mat_metal_gold" rgba="0.7 0.6 0.4 1" reflectance="0.7" shininess="0.9" specular="0.7"/>
+    <material name="mat_chair_leg" rgba="0.85 0.75 0.55 1" reflectance="0.3" shininess="0.2"/>
+  </asset>
+
+  <default>
+    <default class="chair_leg">
+        <geom type="cylinder" size="0.02 0.22" material="mat_chair_leg"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <!-- Professional Lighting Setup -->
+    <!-- Key Light -->
+    <light name="key_light" pos="-2 -3 4" dir="0.5 0.6 -0.8" diffuse="0.9 0.85 0.8" specular="0.4 0.4 0.4" castshadow="true" cutoff="60" attenuation="0.5 0 0.1"/>
+    <!-- Fill Light -->
+    <light name="fill_light" pos="3 2 3" dir="-0.6 -0.4 -0.6" diffuse="0.3 0.35 0.4" specular="0.1 0.1 0.1" castshadow="false" attenuation="0.5 0 0.1"/>
+    <!-- Back Light -->
+    <light name="back_light" pos="0 4 3" dir="0 -0.8 -0.6" diffuse="0.4 0.4 0.35" specular="0.3 0.3 0.3" castshadow="false" attenuation="0.5 0 0.1"/>
+
+    <!-- Floor -->
+    <geom name="floor" type="plane" pos="0 0 0" size="4 3 0.1" rgba="0.85 0.85 0.83 1" material="mat_wood_light"/>
+
+    <!-- ========================================================= -->
+    <!-- TABLE: Elongated to 1.5m length -->
+    <!-- ========================================================= -->
+    <body name="cafe_table" pos="0 0 0">
+      <!-- Base Plate: Widened to support longer top (0.7m x 0.4m base footprint) -->
+      <geom name="base_plate" type="box" pos="0 0 0.008" size="0.35 0.20 0.008" material="mat_white_metal"/>
+      
+      <!-- Legs: Spaced further apart for stability -->
+      <geom name="leg_left" type="cylinder" pos="-0.25 0 0.36" size="0.045 0.35" material="mat_white_metal"/>
+      <geom name="leg_right" type="cylinder" pos="0.25 0 0.36" size="0.045 0.35" material="mat_white_metal"/>
+      
+      <!-- Table Top: 1.5m x 0.7m -->
+      <geom name="table_top" type="box" pos="0 0 0.725" size="0.75 0.35 0.015" material="mat_wood_light"/>
+    </body>
+
+    <!-- ========================================================= -->
+    <!-- CHAIRS: 4 Chairs matching the style -->
+    <!-- Style: Wood legs, cream cushion, curved wood backrest -->
+    <!-- ========================================================= -->
+
+    <!-- Chair 1: Front Right -->
+    <body name="chair_1" pos="0.4 -0.6 0" euler="0 0 180">
+        <!-- Legs (Leg height ~45cm) -->
+        <geom name="c1_leg_fl" class="chair_leg" pos="-0.18 -0.18 0.22"/>
+        <geom name="c1_leg_fr" class="chair_leg" pos="0.18 -0.18 0.22"/>
+        <geom name="c1_leg_bl" class="chair_leg" pos="-0.18 0.18 0.22"/>
+        <geom name="c1_leg_br" class="chair_leg" pos="0.18 0.18 0.22"/>
+
+        <!-- Seat Cushion (Cream) -->
+        <geom name="c1_seat" type="box" pos="0 0 0.46" size="0.20 0.20 0.03" material="mat_cushion_cream"/>
+        
+        <!-- Backrest Frame (Metal supports) -->
+        <geom name="c1_frame_l" type="cylinder" pos="-0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+        <geom name="c1_frame_r" type="cylinder" pos="0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+
+        <!-- Backrest Wood -->
+        <geom name="c1_back" type="box" pos="0 0.18 0.82" size="0.18 0.015 0.08" material="mat_wood_light"/>
+    </body>
+
+    <!-- Chair 2: Front Left -->
+    <body name="chair_2" pos="-0.4 -0.6 0" euler="0 0 180">
+        <geom name="c2_leg_fl" class="chair_leg" pos="-0.18 -0.18 0.22"/>
+        <geom name="c2_leg_fr" class="chair_leg" pos="0.18 -0.18 0.22"/>
+        <geom name="c2_leg_bl" class="chair_leg" pos="-0.18 0.18 0.22"/>
+        <geom name="c2_leg_br" class="chair_leg" pos="0.18 0.18 0.22"/>
+        <geom name="c2_seat" type="box" pos="0 0 0.46" size="0.20 0.20 0.03" material="mat_cushion_cream"/>
+        <geom name="c2_frame_l" type="cylinder" pos="-0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+        <geom name="c2_frame_r" type="cylinder" pos="0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+        <geom name="c2_back" type="box" pos="0 0.18 0.82" size="0.18 0.015 0.08" material="mat_wood_light"/>
+    </body>
+
+    <!-- Chair 3: Back Right (Rotated 180) -->
+    <body name="chair_3" pos="0.4 0.6 0" euler="0 0 0">
+        <geom name="c3_leg_fl" class="chair_leg" pos="-0.18 -0.18 0.22"/>
+        <geom name="c3_leg_fr" class="chair_leg" pos="0.18 -0.18 0.22"/>
+        <geom name="c3_leg_bl" class="chair_leg" pos="-0.18 0.18 0.22"/>
+        <geom name="c3_leg_br" class="chair_leg" pos="0.18 0.18 0.22"/>
+        <geom name="c3_seat" type="box" pos="0 0 0.46" size="0.20 0.20 0.03" material="mat_cushion_cream"/>
+        <geom name="c3_frame_l" type="cylinder" pos="-0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+        <geom name="c3_frame_r" type="cylinder" pos="0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+        <geom name="c3_back" type="box" pos="0 0.18 0.82" size="0.18 0.015 0.08" material="mat_wood_light"/>
+    </body>
+
+    <!-- Chair 4: Back Left (Rotated 180) -->
+    <body name="chair_4" pos="-0.4 0.6 0" euler="0 0 0">
+        <geom name="c4_leg_fl" class="chair_leg" pos="-0.18 -0.18 0.22"/>
+        <geom name="c4_leg_fr" class="chair_leg" pos="0.18 -0.18 0.22"/>
+        <geom name="c4_leg_bl" class="chair_leg" pos="-0.18 0.18 0.22"/>
+        <geom name="c4_leg_br" class="chair_leg" pos="0.18 0.18 0.22"/>
+        <geom name="c4_seat" type="box" pos="0 0 0.46" size="0.20 0.20 0.03" material="mat_cushion_cream"/>
+        <geom name="c4_frame_l" type="cylinder" pos="-0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+        <geom name="c4_frame_r" type="cylinder" pos="0.16 0.18 0.65" size="0.01 0.20" material="mat_metal_gold"/>
+        <geom name="c4_back" type="box" pos="0 0.18 0.82" size="0.18 0.015 0.08" material="mat_wood_light"/>
+    </body>
+
+  </worldbody>
+</mujoco>

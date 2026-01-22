@@ -1,0 +1,128 @@
+<mujoco model="lounge_set">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true" autolimits="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <visual>
+    <!-- Professional Grade Optimization -->
+    <headlight ambient="0.3 0.3 0.35" diffuse="0.4 0.4 0.45" specular="0.1 0.1 0.1"/>
+    <rgba haze="0.85 0.88 0.92 1"/>
+    <global offwidth="3840" offheight="2160" fovy="45"/>
+    <quality shadowsize="4096" offsamples="8"/>
+    <map znear="0.01" zfar="100" shadowscale="0.5"/>
+  </visual>
+
+  <statistic extent="4" center="0 0 1"/>
+
+  <asset>
+    <!-- High-Res Textures -->
+    <texture name="tex_fabric_grey" type="2d" builtin="checker" rgb1="0.35 0.38 0.35" rgb2="0.33 0.36 0.33" width="1024" height="1024" mark="cross" markrgb="0.3 0.33 0.3"/>
+    <texture name="tex_fabric_terra" type="2d" builtin="checker" rgb1="0.65 0.35 0.25" rgb2="0.63 0.33 0.23" width="1024" height="1024" mark="cross" markrgb="0.6 0.3 0.2"/>
+    <texture name="tex_fabric_yellow" type="2d" builtin="checker" rgb1="0.95 0.85 0.3" rgb2="0.93 0.83 0.28" width="1024" height="1024" mark="cross" markrgb="0.9 0.8 0.25"/>
+    <texture name="tex_glossy_beige" type="2d" builtin="flat" rgb1="0.88 0.85 0.78" width="1024" height="1024"/>
+    <texture name="tex_wood_dark" type="2d" builtin="flat" rgb1="0.35 0.2 0.1" width="1024" height="1024"/>
+    <texture name="tex_leather_bump" type="2d" builtin="flat" rgb1="0.5 0.5 1.0" width="1024" height="1024"/> <!-- Normal map placeholder -->
+    
+    <!-- PBR-like Materials -->
+    <material name="mat_sofa_grey" texture="tex_fabric_grey" texrepeat="4 4" reflectance="0.15" shininess="0.2" specular="0.1" emission="0.0"/>
+    <material name="mat_armchair_terra" texture="tex_fabric_terra" texrepeat="3 3" reflectance="0.15" shininess="0.2" specular="0.1" emission="0.0"/>
+    <material name="mat_pillow_yellow" texture="tex_fabric_yellow" texrepeat="2 2" reflectance="0.2" shininess="0.3" specular="0.15"/>
+    <material name="mat_table_glossy" texture="tex_glossy_beige" reflectance="0.7" shininess="0.9" specular="0.8"/>
+    <material name="mat_wood_dark" texture="tex_wood_dark" reflectance="0.3" shininess="0.4" specular="0.2"/>
+    <material name="mat_glass_clear" rgba="0.9 0.95 1.0 0.2" reflectance="0.9" shininess="1.0" specular="0.9"/>
+  </asset>
+
+  <worldbody>
+    <!-- Enhanced Lighting -->
+    <light pos="3 3 5" dir="-0.5 -0.5 -1" diffuse="0.95 0.9 0.85" specular="0.4 0.4 0.4" castshadow="true" cutoff="60"/>
+    <light pos="-2 -2 4" dir="0.5 0.5 -1" diffuse="0.3 0.35 0.4" specular="0.1 0.1 0.1" castshadow="false"/> <!-- Fill light -->
+    <light pos="0 0 3" dir="0 0 -1" diffuse="0.2 0.2 0.2" specular="0.0 0.0 0.0" castshadow="false"/> <!-- Ambient imitation -->
+
+    <geom name="floor" type="plane" pos="0 0 0" size="3 3 0.1" rgba="0.15 0.15 0.16 1"/>
+
+    <!-- ================= CYLINDRICAL COFFEE TABLE ================= -->
+    <body name="coffee_table" pos="0 0 0">
+        <!-- Solid cylindrical body -->
+        <geom name="ct_body" type="cylinder" pos="0 0 0.22" size="0.28 0.22" material="mat_table_glossy"/>
+        
+        <!-- Decor: Candle holder -->
+        <geom name="ct_candle_glass" type="cylinder" pos="0.05 0.05 0.5" size="0.04 0.06" material="mat_glass_clear"/>
+        <geom name="ct_candle" type="cylinder" pos="0.05 0.05 0.48" size="0.03 0.04" rgba="0.95 0.9 0.8 1"/>
+        <!-- Decor: Small dish -->
+        <geom name="ct_dish" type="ellipsoid" pos="-0.08 -0.05 0.45" size="0.06 0.06 0.02" rgba="0.4 0.3 0.2 1"/>
+    </body>
+
+    <!-- ================= 2-SEATER SOFA (Grey) ================= -->
+    <body name="sofa_grey" pos="0 1.2 0" euler="0 0 0">
+        <!-- Legs -->
+        <geom name="sf_leg_fl" type="cylinder" pos="-0.7 -0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
+        <geom name="sf_leg_fr" type="cylinder" pos=" 0.7 -0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
+        <geom name="sf_leg_bl" type="cylinder" pos="-0.7  0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
+        <geom name="sf_leg_br" type="cylinder" pos=" 0.7  0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
+
+        <!-- Seat Base -->
+        <geom name="sf_seat" type="box" pos="0 0 0.3" size="0.8 0.4 0.14" material="mat_sofa_grey"/>
+        
+        <!-- Backrest -->
+        <geom name="sf_back" type="box" pos="0 0.35 0.55" size="0.8 0.1 0.25" euler="-10 0 0" material="mat_sofa_grey"/>
+        
+        <!-- Armrests -->
+        <geom name="sf_arm_l" type="box" pos="-0.75 0 0.45" size="0.08 0.4 0.15" material="mat_sofa_grey"/>
+        <geom name="sf_arm_r" type="box" pos=" 0.75 0 0.45" size="0.08 0.4 0.15" material="mat_sofa_grey"/>
+
+        <!-- Throw Pillows (Yellow) -->
+        <geom name="sf_pillow1" type="box" pos="-0.6 0.25 0.45" size="0.18 0.08 0.18" euler="-15 0 10" material="mat_pillow_yellow"/>
+        <geom name="sf_pillow2" type="box" pos=" 0.6 0.25 0.45" size="0.18 0.08 0.18" euler="-15 0 -10" material="mat_pillow_yellow"/>
+    </body>
+
+    <!-- ================= ARMCHAIR 1 (Terracotta) ================= -->
+    <body name="armchair_1" pos="-1.1 -0.5 0" euler="0 0 115">
+        <!-- Legs -->
+        <geom name="ac1_leg_fl" type="cylinder" fromto="-0.25 -0.25 0 -0.28 -0.28 0.25" size="0.025" material="mat_wood_dark"/>
+        <geom name="ac1_leg_fr" type="cylinder" fromto=" 0.25 -0.25 0  0.28 -0.28 0.25" size="0.025" material="mat_wood_dark"/>
+        <geom name="ac1_leg_bl" type="cylinder" fromto="-0.25  0.25 0 -0.28  0.35 0.25" size="0.025" material="mat_wood_dark"/>
+        <geom name="ac1_leg_br" type="cylinder" fromto=" 0.25  0.25 0  0.28  0.35 0.25" size="0.025" material="mat_wood_dark"/>
+
+        <!-- Seat -->
+        <geom name="ac1_seat" type="box" pos="0 0 0.35" size="0.32 0.32 0.1" material="mat_armchair_terra"/>
+        
+        <!-- Backrest -->
+        <geom name="ac1_back" type="box" pos="0 0.25 0.65" size="0.32 0.08 0.25" euler="-15 0 0" material="mat_armchair_terra"/>
+        
+        <!-- Wooden Arms -->
+        <body name="ac1_arms">
+             <!-- Left Arm Frame -->
+             <geom name="ac1_arm_l_v" type="cylinder" fromto="-0.3 0.1 0.25 -0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
+             <geom name="ac1_arm_l_h" type="box" pos="-0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
+             
+             <!-- Right Arm Frame -->
+             <geom name="ac1_arm_r_v" type="cylinder" fromto=" 0.3 0.1 0.25  0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
+             <geom name="ac1_arm_r_h" type="box" pos=" 0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
+        </body>
+    </body>
+
+    <!-- ================= ARMCHAIR 2 (Terracotta) ================= -->
+    <body name="armchair_2" pos="1.1 -0.5 0" euler="0 0 -115">
+        <!-- Legs -->
+        <geom name="ac2_leg_fl" type="cylinder" fromto="-0.25 -0.25 0 -0.28 -0.28 0.25" size="0.025" material="mat_wood_dark"/>
+        <geom name="ac2_leg_fr" type="cylinder" fromto=" 0.25 -0.25 0  0.28 -0.28 0.25" size="0.025" material="mat_wood_dark"/>
+        <geom name="ac2_leg_bl" type="cylinder" fromto="-0.25  0.25 0 -0.28  0.35 0.25" size="0.025" material="mat_wood_dark"/>
+        <geom name="ac2_leg_br" type="cylinder" fromto=" 0.25  0.25 0  0.28  0.35 0.25" size="0.025" material="mat_wood_dark"/>
+
+        <!-- Seat -->
+        <geom name="ac2_seat" type="box" pos="0 0 0.35" size="0.32 0.32 0.1" material="mat_armchair_terra"/>
+        
+        <!-- Backrest -->
+        <geom name="ac2_back" type="box" pos="0 0.25 0.65" size="0.32 0.08 0.25" euler="-15 0 0" material="mat_armchair_terra"/>
+        
+        <!-- Wooden Arms -->
+        <body name="ac2_arms">
+             <geom name="ac2_arm_l_v" type="cylinder" fromto="-0.3 0.1 0.25 -0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
+             <geom name="ac2_arm_l_h" type="box" pos="-0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
+             
+             <geom name="ac2_arm_r_v" type="cylinder" fromto=" 0.3 0.1 0.25  0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
+             <geom name="ac2_arm_r_h" type="box" pos=" 0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
+        </body>
+    </body>
+
+  </worldbody>
+</mujoco>
