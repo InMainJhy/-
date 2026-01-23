@@ -95,6 +95,14 @@
     <!-- Entry Rug Material (Solid Gray) -->
     <material name="mat_rug_entry" rgba="0.5 0.5 0.5 1" reflectance="0.05" shininess="0.05" specular="0.02"/>
 
+    <material name="mat_tcd_body" texture="tex_wood_light" reflectance="0.2" shininess="0.1"/>
+    <material name="mat_tcd_bright" texture="tex_wood_light" reflectance="0.2" shininess="0.1"/>
+    <material name="mat_tcd_handle_black" rgba="0.05 0.05 0.05 1" shininess="0.1" specular="0.1" reflectance="0.05"/>
+    <material name="mat_tcd_top_surface" rgba="0.15 0.15 0.15 1" shininess="0.1" specular="0.1" reflectance="0.0"/>
+    <material name="mat_tcd_red_tool" rgba="0.8 0.05 0.05 1" shininess="0.6" specular="0.4" reflectance="0.1"/>
+    <material name="mat_tcd_wheel_rubber" rgba="0.1 0.1 0.1 1" shininess="0.3" specular="0.2"/>
+    <material name="mat_tcd_wheel_metal" rgba="0.7 0.7 0.7 1" shininess="0.9" specular="0.9"/>
+
     <material class="panda" name="white" rgba="1 1 1 1"/>
     <material class="panda" name="off_white" rgba="0.901961 0.921569 0.929412 1"/>
     <material class="panda" name="black" rgba="0.25 0.25 0.25 1"/>
@@ -1206,6 +1214,154 @@
          </body>
     </body>
 
+    <body name="tool_cabinet_detailed_1" pos="-5.55 3.55 0">
+      <body pos="0 0 0.1">
+        <body pos="0.3 0.2 0">
+          <joint axis="0 0 1" type="hinge"/>
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+        <body pos="0.3 -0.2 0">
+          <joint axis="0 0 1" type="hinge"/>
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+        <body pos="-0.3 0.2 0">
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+        <body pos="-0.3 -0.2 0">
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+
+        <body pos="0 0 0.12">
+          <geom type="box" size="0.35 0.35 0.02" pos="0 0 0.02" material="mat_tcd_body"/>
+          <geom type="box" size="0.36 0.36 0.02" pos="0 0 0.82" material="mat_tcd_top_surface"/>
+          <geom type="box" size="0.35 0.02 0.4" pos="0 0.33 0.42" material="mat_tcd_body"/>
+          <geom type="box" size="0.35 0.02 0.4" pos="0 -0.33 0.42" material="mat_tcd_body"/>
+          <geom type="box" size="0.02 0.35 0.4" pos="-0.33 0 0.42" material="mat_tcd_body"/>
+
+          <body pos="0 0 0.7">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.05" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.04" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.02 0.06 0.01" pos="0.36 0.15 0" material="mat_tcd_handle_black"/>
+            <geom type="box" size="0.02 0.06 0.01" pos="0.36 -0.15 0" material="mat_tcd_handle_black"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.03" material="mat_chrome"/>
+          </body>
+
+          <body pos="0 0 0.58">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.06" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.05" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.04" material="mat_chrome"/>
+          </body>
+
+          <body pos="0 0 0.44">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.07" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.06" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.05" material="mat_chrome"/>
+          </body>
+
+          <body pos="0 0 0.25">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.11" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.10" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.09" material="mat_chrome"/>
+          </body>
+
+          <body pos="-0.33 0 1.1">
+            <geom type="box" size="0.01 0.35 0.3" material="mat_tcd_body"/>
+            <geom type="box" size="0.02 0.05 0.08" pos="0.02 0.2 0.1" material="mat_tcd_red_tool"/>
+            <geom type="box" size="0.015 0.06 0.08" pos="0.02 0 0.1" rgba="0.1 0.1 0.1 1"/>
+            <geom type="box" size="0.016 0.05 0.07" pos="0.02 0 0.1" rgba="0.9 0.9 0.9 1"/>
+            <geom type="box" size="0.02 0.01 0.02" pos="0.02 -0.15 0.15" material="mat_tcd_red_tool"/>
+            <geom type="box" size="0.02 0.01 0.02" pos="0.02 -0.25 0.10" material="mat_tcd_red_tool"/>
+          </body>
+
+          <body pos="0 -0.36 0.7">
+            <geom type="cylinder" size="0.01 0.1" fromto="0 0 0 0 -0.05 0" material="mat_chrome"/>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="tool_cabinet_detailed_2" pos="-5.55 2.75 0">
+      <body pos="0 0 0.1">
+        <body pos="0.3 0.2 0">
+          <joint axis="0 0 1" type="hinge"/>
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+        <body pos="0.3 -0.2 0">
+          <joint axis="0 0 1" type="hinge"/>
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+        <body pos="-0.3 0.2 0">
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+        <body pos="-0.3 -0.2 0">
+          <geom type="cylinder" size="0.05 0.02" euler="90 0 0" material="mat_tcd_wheel_rubber"/>
+          <geom type="box" size="0.03 0.03 0.04" pos="0 0 0.06" material="mat_tcd_wheel_metal"/>
+        </body>
+
+        <body pos="0 0 0.12">
+          <geom type="box" size="0.35 0.35 0.02" pos="0 0 0.02" material="mat_tcd_body"/>
+          <geom type="box" size="0.36 0.36 0.02" pos="0 0 0.82" material="mat_tcd_top_surface"/>
+          <geom type="box" size="0.35 0.02 0.4" pos="0 0.33 0.42" material="mat_tcd_body"/>
+          <geom type="box" size="0.35 0.02 0.4" pos="0 -0.33 0.42" material="mat_tcd_body"/>
+          <geom type="box" size="0.02 0.35 0.4" pos="-0.33 0 0.42" material="mat_tcd_body"/>
+
+          <body pos="0 0 0.7">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.05" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.04" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.02 0.06 0.01" pos="0.36 0.15 0" material="mat_tcd_handle_black"/>
+            <geom type="box" size="0.02 0.06 0.01" pos="0.36 -0.15 0" material="mat_tcd_handle_black"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.03" material="mat_chrome"/>
+          </body>
+
+          <body pos="0 0 0.58">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.06" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.05" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.04" material="mat_chrome"/>
+          </body>
+
+          <body pos="0 0 0.44">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.07" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.06" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.05" material="mat_chrome"/>
+          </body>
+
+          <body pos="0 0 0.25">
+            <joint axis="1 0 0" type="slide" range="0 0.3"/>
+            <geom type="box" size="0.01 0.30 0.11" pos="0.34 0 0" material="mat_tcd_bright"/>
+            <geom type="box" size="0.32 0.28 0.10" pos="0 0 0" rgba="0.5 0.5 0.5 1"/>
+            <geom type="box" size="0.012 0.28 0.005" pos="0.34 0 0.09" material="mat_chrome"/>
+          </body>
+
+          <body pos="-0.33 0 1.1">
+            <geom type="box" size="0.01 0.35 0.3" material="mat_tcd_body"/>
+            <geom type="box" size="0.02 0.05 0.08" pos="0.02 0.2 0.1" material="mat_tcd_red_tool"/>
+            <geom type="box" size="0.015 0.06 0.08" pos="0.02 0 0.1" rgba="0.1 0.1 0.1 1"/>
+            <geom type="box" size="0.016 0.05 0.07" pos="0.02 0 0.1" rgba="0.9 0.9 0.9 1"/>
+            <geom type="box" size="0.02 0.01 0.02" pos="0.02 -0.15 0.15" material="mat_tcd_red_tool"/>
+            <geom type="box" size="0.02 0.01 0.02" pos="0.02 -0.25 0.10" material="mat_tcd_red_tool"/>
+          </body>
+
+          <body pos="0 -0.36 0.7">
+            <geom type="cylinder" size="0.01 0.1" fromto="0 0 0 0 -0.05 0" material="mat_chrome"/>
+          </body>
+        </body>
+      </body>
+    </body>
+
     <body name="panda_mount" pos="-2.2 3.55 1.1">
       <body name="link0" childclass="panda">
         <inertial mass="0.629769" pos="-0.041018 -0.00014 0.049974"
@@ -1340,6 +1496,112 @@
           </body>
         </body>
       </body>
+    </body>
+
+    <body name="bar_cup_saucer_1" pos="-1.8 3.55 1.1" euler="0 0 20">
+      <geom name="cup1_saucer" type="cylinder" size="0.075 0.006" pos="0 0 0.006" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_cup_outer" type="cylinder" size="0.035 0.03" pos="0 0 0.042" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_cup_lip" type="cylinder" size="0.037 0.004" pos="0 0 0.072" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_handle" type="capsule" size="0.006 0.02" pos="0.045 0 0.05" euler="0 0 90" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+    </body>
+
+    <body name="tool_cabinet_wall_1" pos="-3.2 5.61 0" euler="0 0 180">
+         <geom name="toolcab_back_wall" type="box" size="0.5 0.02 0.9" pos="0 -0.25 0.9" material="mat_wood_light"/>
+         <geom name="toolcab_left_wall" type="box" size="0.02 0.25 0.9" pos="-0.48 0 0.9" material="mat_wood_light"/>
+         <geom name="toolcab_right_wall" type="box" size="0.02 0.25 0.9" pos="0.48 0 0.9" material="mat_wood_light"/>
+         <geom name="toolcab_top" type="box" size="0.5 0.27 0.02" pos="0 0 1.82" material="mat_wood_light"/>
+         <geom name="toolcab_bottom" type="box" size="0.5 0.27 0.02" pos="0 0 0.02" material="mat_wood_light"/>
+
+         <geom name="toolcab_shelf_1" type="box" size="0.46 0.23 0.01" pos="0 0 0.4" material="mat_wood_light"/>
+         <geom name="toolcab_shelf_2" type="box" size="0.46 0.23 0.01" pos="0 0 0.8" material="mat_wood_light"/>
+         <geom name="toolcab_shelf_3" type="box" size="0.46 0.23 0.01" pos="0 0 1.2" material="mat_wood_light"/>
+         <geom name="toolcab_shelf_4" type="box" size="0.46 0.23 0.01" pos="0 0 1.55" material="mat_wood_light"/>
+
+         <body name="toolcab_left_door" pos="-0.48 0.25 0.9">
+           <geom name="toolcab_ld_left_frame" type="box" size="0.04 0.02 0.9" pos="0.04 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab_ld_right_frame" type="box" size="0.04 0.02 0.9" pos="0.46 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab_ld_top_frame" type="box" size="0.25 0.02 0.04" pos="0.25 0 0.86" material="mat_wood_dark"/>
+           <geom name="toolcab_ld_bottom_frame" type="box" size="0.25 0.02 0.04" pos="0.25 0 -0.86" material="mat_wood_dark"/>
+           <geom name="toolcab_ld_glass" type="box" size="0.2 0.005 0.82" pos="0.25 0 0" material="mat_glass"/>
+           <geom name="toolcab_ld_handle" type="box" size="0.01 0.03 0.05" pos="0.44 0.05 0" material="mat_frame"/>
+         </body>
+
+         <body name="toolcab_right_door" pos="0.48 0.25 0.9">
+           <geom name="toolcab_rd_right_frame" type="box" size="0.04 0.02 0.9" pos="-0.04 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab_rd_left_frame" type="box" size="0.04 0.02 0.9" pos="-0.46 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab_rd_top_frame" type="box" size="0.25 0.02 0.04" pos="-0.25 0 0.86" material="mat_wood_dark"/>
+           <geom name="toolcab_rd_bottom_frame" type="box" size="0.25 0.02 0.04" pos="-0.25 0 -0.86" material="mat_wood_dark"/>
+           <geom name="toolcab_rd_glass" type="box" size="0.2 0.005 0.82" pos="-0.25 0 0" material="mat_glass"/>
+           <geom name="toolcab_rd_handle" type="box" size="0.01 0.03 0.05" pos="-0.44 0.05 0" material="mat_frame"/>
+         </body>
+
+         <body name="toolcab_tools" pos="0 0 0"/>
+    </body>
+
+    <body name="tool_cabinet_wall_2" pos="-5.0 5.61 0" euler="0 0 180">
+         <geom name="toolcab2_back_wall" type="box" size="0.5 0.02 0.9" pos="0 -0.25 0.9" material="mat_wood_light"/>
+         <geom name="toolcab2_left_wall" type="box" size="0.02 0.25 0.9" pos="-0.48 0 0.9" material="mat_wood_light"/>
+         <geom name="toolcab2_right_wall" type="box" size="0.02 0.25 0.9" pos="0.48 0 0.9" material="mat_wood_light"/>
+         <geom name="toolcab2_top" type="box" size="0.5 0.27 0.02" pos="0 0 1.82" material="mat_wood_light"/>
+         <geom name="toolcab2_bottom" type="box" size="0.5 0.27 0.02" pos="0 0 0.02" material="mat_wood_light"/>
+
+         <geom name="toolcab2_shelf_1" type="box" size="0.46 0.23 0.01" pos="0 0 0.4" material="mat_wood_light"/>
+         <geom name="toolcab2_shelf_2" type="box" size="0.46 0.23 0.01" pos="0 0 0.8" material="mat_wood_light"/>
+         <geom name="toolcab2_shelf_3" type="box" size="0.46 0.23 0.01" pos="0 0 1.2" material="mat_wood_light"/>
+         <geom name="toolcab2_shelf_4" type="box" size="0.46 0.23 0.01" pos="0 0 1.55" material="mat_wood_light"/>
+
+         <body name="toolcab2_left_door" pos="-0.48 0.25 0.9">
+           <geom name="toolcab2_ld_left_frame" type="box" size="0.04 0.02 0.9" pos="0.04 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab2_ld_right_frame" type="box" size="0.04 0.02 0.9" pos="0.46 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab2_ld_top_frame" type="box" size="0.25 0.02 0.04" pos="0.25 0 0.86" material="mat_wood_dark"/>
+           <geom name="toolcab2_ld_bottom_frame" type="box" size="0.25 0.02 0.04" pos="0.25 0 -0.86" material="mat_wood_dark"/>
+           <geom name="toolcab2_ld_glass" type="box" size="0.2 0.005 0.82" pos="0.25 0 0" material="mat_glass"/>
+           <geom name="toolcab2_ld_handle" type="box" size="0.01 0.03 0.05" pos="0.44 0.05 0" material="mat_frame"/>
+         </body>
+
+         <body name="toolcab2_right_door" pos="0.48 0.25 0.9">
+           <geom name="toolcab2_rd_right_frame" type="box" size="0.04 0.02 0.9" pos="-0.04 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab2_rd_left_frame" type="box" size="0.04 0.02 0.9" pos="-0.46 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab2_rd_top_frame" type="box" size="0.25 0.02 0.04" pos="-0.25 0 0.86" material="mat_wood_dark"/>
+           <geom name="toolcab2_rd_bottom_frame" type="box" size="0.25 0.02 0.04" pos="-0.25 0 -0.86" material="mat_wood_dark"/>
+           <geom name="toolcab2_rd_glass" type="box" size="0.2 0.005 0.82" pos="-0.25 0 0" material="mat_glass"/>
+           <geom name="toolcab2_rd_handle" type="box" size="0.01 0.03 0.05" pos="-0.44 0.05 0" material="mat_frame"/>
+         </body>
+
+         <body name="toolcab2_tools" pos="0 0 0"/>
+    </body>
+
+    <body name="tool_cabinet_wall_3" pos="3.8 5.61 0" euler="0 0 180">
+         <geom name="toolcab3_back_wall" type="box" size="0.5 0.02 0.9" pos="0 -0.25 0.9" material="mat_wood_light"/>
+         <geom name="toolcab3_left_wall" type="box" size="0.02 0.25 0.9" pos="-0.48 0 0.9" material="mat_wood_light"/>
+         <geom name="toolcab3_right_wall" type="box" size="0.02 0.25 0.9" pos="0.48 0 0.9" material="mat_wood_light"/>
+         <geom name="toolcab3_top" type="box" size="0.5 0.27 0.02" pos="0 0 1.82" material="mat_wood_light"/>
+         <geom name="toolcab3_bottom" type="box" size="0.5 0.27 0.02" pos="0 0 0.02" material="mat_wood_light"/>
+
+         <geom name="toolcab3_shelf_1" type="box" size="0.46 0.23 0.01" pos="0 0 0.4" material="mat_wood_light"/>
+         <geom name="toolcab3_shelf_2" type="box" size="0.46 0.23 0.01" pos="0 0 0.8" material="mat_wood_light"/>
+         <geom name="toolcab3_shelf_3" type="box" size="0.46 0.23 0.01" pos="0 0 1.2" material="mat_wood_light"/>
+         <geom name="toolcab3_shelf_4" type="box" size="0.46 0.23 0.01" pos="0 0 1.55" material="mat_wood_light"/>
+
+         <body name="toolcab3_left_door" pos="-0.48 0.25 0.9">
+           <geom name="toolcab3_ld_left_frame" type="box" size="0.04 0.02 0.9" pos="0.04 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab3_ld_right_frame" type="box" size="0.04 0.02 0.9" pos="0.46 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab3_ld_top_frame" type="box" size="0.25 0.02 0.04" pos="0.25 0 0.86" material="mat_wood_dark"/>
+           <geom name="toolcab3_ld_bottom_frame" type="box" size="0.25 0.02 0.04" pos="0.25 0 -0.86" material="mat_wood_dark"/>
+           <geom name="toolcab3_ld_glass" type="box" size="0.2 0.005 0.82" pos="0.25 0 0" material="mat_glass"/>
+           <geom name="toolcab3_ld_handle" type="box" size="0.01 0.03 0.05" pos="0.44 0.05 0" material="mat_frame"/>
+         </body>
+
+         <body name="toolcab3_right_door" pos="0.48 0.25 0.9">
+           <geom name="toolcab3_rd_right_frame" type="box" size="0.04 0.02 0.9" pos="-0.04 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab3_rd_left_frame" type="box" size="0.04 0.02 0.9" pos="-0.46 0 0" material="mat_wood_dark"/>
+           <geom name="toolcab3_rd_top_frame" type="box" size="0.25 0.02 0.04" pos="-0.25 0 0.86" material="mat_wood_dark"/>
+           <geom name="toolcab3_rd_bottom_frame" type="box" size="0.25 0.02 0.04" pos="-0.25 0 -0.86" material="mat_wood_dark"/>
+           <geom name="toolcab3_rd_glass" type="box" size="0.2 0.005 0.82" pos="-0.25 0 0" material="mat_glass"/>
+           <geom name="toolcab3_rd_handle" type="box" size="0.01 0.03 0.05" pos="-0.44 0.05 0" material="mat_frame"/>
+         </body>
+
+         <body name="toolcab3_tools" pos="0 0 0"/>
     </body>
 
     <body name="back_bar" pos="0 5.6 0">
