@@ -31,8 +31,15 @@
     <material name="mat_bulb" rgba="1 1 0.95 1" emission="3.5" reflectance="0.0"/>
     
     <!-- Coffee Bar Materials -->
-    <texture name="tex_wood_light" type="2d" builtin="checker" rgb1="0.83 0.71 0.56" rgb2="0.80 0.67 0.52" width="2048" height="2048" mark="random" markrgb="0.76 0.62 0.45"/> 
+    <texture name="tex_wood_light" type="2d" builtin="checker" rgb1="0.83 0.71 0.56" rgb2="0.80 0.67 0.52" width="4096" height="4096" mark="random" markrgb="0.76 0.62 0.45"/> 
+    <texture name="tex_fabric_white" type="2d" builtin="flat" rgb1="0.95 0.95 0.95" width="4096" height="4096"/>
+    <texture name="tex_plant_green" type="2d" builtin="checker" rgb1="0.1 0.5 0.1" rgb2="0.15 0.55 0.15" width="2048" height="2048"/>
+
     <material name="mat_wood_light" texture="tex_wood_light" texrepeat="10 2" reflectance="0.12" shininess="0.25" specular="0.18"/>
+    <material name="mat_cushion_white" texture="tex_fabric_white" reflectance="0.05" shininess="0.1"/>
+    <material name="mat_plant_green" texture="tex_plant_green" reflectance="0.05" shininess="0.1"/>
+    <material name="mat_flower_center" rgba="0.95 0.9 0.2 1" reflectance="0.1" shininess="0.2"/>
+    <material name="mat_flower_petal" rgba="0.98 0.98 0.98 1" reflectance="0.1" shininess="0.2"/>
     <material name="mat_counter_top" rgba="0.92 0.92 0.93 1" reflectance="0.28" shininess="0.85" specular="0.65"/>
     <material name="mat_chrome" rgba="0.9 0.9 0.95 1" reflectance="0.75" shininess="1.0" specular="1.0"/>
     <material name="mat_leather_black" rgba="0.1 0.1 0.1 1" reflectance="0.08" shininess="0.55" specular="0.25"/>
@@ -250,185 +257,7 @@
     <!-- Entry Rug (Placed near the entrance doors at y=-6) -->
     <geom name="entry_rug" type="box" pos="0 -5.2 0.01" size="1.1 0.5 0.01" material="mat_rug_entry"/>
 
-    <!-- ================= LOUNGE SET (Center Square Area) ================= -->
-    <body name="lounge_area" pos="1.5 0.5 0">
-        <!-- CYLINDRICAL COFFEE TABLE -->
-        <body name="coffee_table" pos="0 0 0">
-            <!-- Solid cylindrical body -->
-            <geom name="ct_body" type="cylinder" pos="0 0 0.22" size="0.28 0.22" material="mat_table_glossy"/>
-            
-            <!-- Decor: Candle holder -->
-            <geom name="ct_candle_glass" type="cylinder" pos="0.05 0.05 0.5" size="0.04 0.06" material="mat_glass_clear"/>
-            <geom name="ct_candle" type="cylinder" pos="0.05 0.05 0.48" size="0.03 0.04" rgba="0.95 0.9 0.8 1"/>
-            <!-- Decor: Small dish -->
-            <geom name="ct_dish" type="ellipsoid" pos="-0.08 -0.05 0.45" size="0.06 0.06 0.02" rgba="0.4 0.3 0.2 1"/>
-        </body>
 
-        <!-- 2-SEATER SOFA (Grey) -->
-        <body name="sofa_grey" pos="0 1.2 0" euler="0 0 0">
-            <!-- Legs -->
-            <geom name="sf_leg_fl" type="cylinder" pos="-0.7 -0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-            <geom name="sf_leg_fr" type="cylinder" pos=" 0.7 -0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-            <geom name="sf_leg_bl" type="cylinder" pos="-0.7  0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-            <geom name="sf_leg_br" type="cylinder" pos=" 0.7  0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-
-            <!-- Seat Base -->
-            <geom name="sf_seat" type="box" pos="0 0 0.22" size="0.8 0.4 0.10" material="mat_sofa_grey" friction="0.9 0.01 0.0001" contype="0" conaffinity="0"/>
-            <body name="sf_cushion_l" pos="-0.39 0 0.40">
-                <joint name="sf_cushion_l_slide" type="slide" axis="0 0 1" range="-0.09 0" stiffness="5200" damping="160"/>
-                <geom name="sf_seat_l" type="box" pos="0 0 0" size="0.38 0.34 0.07" material="mat_sofa_grey" density="35" solimp="0.86 0.95 0.003" solref="0.08 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            <body name="sf_cushion_r" pos="0.39 0 0.40">
-                <joint name="sf_cushion_r_slide" type="slide" axis="0 0 1" range="-0.09 0" stiffness="5200" damping="160"/>
-                <geom name="sf_seat_r" type="box" pos="0 0 0" size="0.38 0.34 0.07" material="mat_sofa_grey" density="35" solimp="0.86 0.95 0.003" solref="0.08 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            
-            <!-- Backrest -->
-            <geom name="sf_back" type="box" pos="0 0.38 0.56" size="0.8 0.08 0.23" euler="-10 0 0" material="mat_sofa_grey" friction="0.9 0.01 0.0001" contype="0" conaffinity="0"/>
-            <geom name="sf_back_l" type="box" pos="-0.39 0.20 0.58" size="0.36 0.10 0.20" euler="-8 0 0" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-            <geom name="sf_back_r" type="box" pos=" 0.39 0.20 0.58" size="0.36 0.10 0.20" euler="-8 0 0" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-            
-            <!-- Armrests -->
-            <geom name="sf_arm_l" type="box" pos="-0.75 0 0.45" size="0.08 0.4 0.15" material="mat_sofa_grey"/>
-            <geom name="sf_arm_r" type="box" pos=" 0.75 0 0.45" size="0.08 0.4 0.15" material="mat_sofa_grey"/>
-            <geom name="sf_arm_l_pad" type="box" pos="-0.75 0 0.61" size="0.085 0.35 0.05" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-            <geom name="sf_arm_r_pad" type="box" pos=" 0.75 0 0.61" size="0.085 0.35 0.05" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-
-        </body>
-
-        <!-- ARMCHAIR 1 (Terracotta) -->
-        <body name="armchair_1" pos="-1.1 -0.5 0" euler="0 0 115">
-            <!-- Legs -->
-            <geom name="ac1_leg_fl" type="capsule" pos="-0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac1_leg_fr" type="capsule" pos=" 0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac1_leg_bl" type="capsule" pos="-0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac1_leg_br" type="capsule" pos=" 0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-
-            <!-- Seat -->
-            <geom name="ac1_seat" type="box" pos="0 0 0.35" size="0.32 0.32 0.1" material="mat_armchair_terra" contype="0" conaffinity="0"/>
-            <body name="ac1_cushion" pos="0 0 0.43">
-                <joint name="ac1_cushion_slide" type="slide" axis="0 0 1" range="-0.06 0" stiffness="4200" damping="120"/>
-                <geom name="ac1_seat_cushion" type="box" size="0.30 0.30 0.07" material="mat_armchair_terra" density="35" solimp="0.86 0.95 0.003" solref="0.10 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            
-            <!-- Backrest -->
-            <geom name="ac1_back" type="box" pos="0 0.25 0.65" size="0.32 0.08 0.25" euler="-15 0 0" material="mat_armchair_terra"/>
-            
-            <!-- Wooden Arms -->
-            <body name="ac1_arms">
-                 <!-- Left Arm Frame -->
-                 <geom name="ac1_arm_l_v" type="cylinder" fromto="-0.3 0.1 0.25 -0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac1_arm_l_h" type="box" pos="-0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-                 
-                 <!-- Right Arm Frame -->
-                 <geom name="ac1_arm_r_v" type="cylinder" fromto=" 0.3 0.1 0.25  0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac1_arm_r_h" type="box" pos=" 0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-            </body>
-        </body>
-
-        <!-- ARMCHAIR 2 (Terracotta) -->
-        <body name="armchair_2" pos="1.1 -0.5 0" euler="0 0 -115">
-            <!-- Legs -->
-            <geom name="ac2_leg_fl" type="capsule" pos="-0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac2_leg_fr" type="capsule" pos=" 0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac2_leg_bl" type="capsule" pos="-0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac2_leg_br" type="capsule" pos=" 0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-
-            <!-- Seat -->
-            <geom name="ac2_seat" type="box" pos="0 0 0.35" size="0.32 0.32 0.1" material="mat_armchair_terra" contype="0" conaffinity="0"/>
-            <body name="ac2_cushion" pos="0 0 0.43">
-                <joint name="ac2_cushion_slide" type="slide" axis="0 0 1" range="-0.06 0" stiffness="4200" damping="120"/>
-                <geom name="ac2_seat_cushion" type="box" size="0.30 0.30 0.07" material="mat_armchair_terra" density="35" solimp="0.86 0.95 0.003" solref="0.10 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            
-            <!-- Backrest -->
-            <geom name="ac2_back" type="box" pos="0 0.25 0.65" size="0.32 0.08 0.25" euler="-15 0 0" material="mat_armchair_terra"/>
-            
-            <!-- Wooden Arms -->
-            <body name="ac2_arms">
-                 <geom name="ac2_arm_l_v" type="cylinder" fromto="-0.3 0.1 0.25 -0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac2_arm_l_h" type="box" pos="-0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-                 
-                 <geom name="ac2_arm_r_v" type="cylinder" fromto=" 0.3 0.1 0.25  0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac2_arm_r_h" type="box" pos=" 0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-            </body>
-        </body>
-    </body>
-
-    <!-- ================= LOUNGE SET 2 (Front Right Area) ================= -->
-    <body name="lounge_area_2" pos="1.5 -2.5 0">
-        <!-- CYLINDRICAL COFFEE TABLE -->
-        <body name="coffee_table_2" pos="0 0 0">
-            <geom name="ct_body_2" type="cylinder" pos="0 0 0.22" size="0.28 0.22" material="mat_table_glossy"/>
-            <geom name="ct_candle_glass_2" type="cylinder" pos="0.05 0.05 0.5" size="0.04 0.06" material="mat_glass_clear"/>
-            <geom name="ct_candle_2" type="cylinder" pos="0.05 0.05 0.48" size="0.03 0.04" rgba="0.95 0.9 0.8 1"/>
-            <geom name="ct_dish_2" type="ellipsoid" pos="-0.08 -0.05 0.45" size="0.06 0.06 0.02" rgba="0.4 0.3 0.2 1"/>
-        </body>
-
-        <!-- 2-SEATER SOFA (Grey) -->
-        <body name="sofa_grey_2" pos="0 1.2 0" euler="0 0 0">
-            <geom name="sf_leg_fl_2" type="cylinder" pos="-0.7 -0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-            <geom name="sf_leg_fr_2" type="cylinder" pos=" 0.7 -0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-            <geom name="sf_leg_bl_2" type="cylinder" pos="-0.7  0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-            <geom name="sf_leg_br_2" type="cylinder" pos=" 0.7  0.35 0.08" size="0.03 0.08" material="mat_wood_dark"/>
-            <geom name="sf_seat_2" type="box" pos="0 0 0.22" size="0.8 0.4 0.10" material="mat_sofa_grey" friction="0.9 0.01 0.0001" contype="0" conaffinity="0"/>
-            <body name="sf_cushion_l_2" pos="-0.39 0 0.40">
-                <joint name="sf_cushion_l_slide_2" type="slide" axis="0 0 1" range="-0.09 0" stiffness="5200" damping="160"/>
-                <geom name="sf_seat_l_2" type="box" pos="0 0 0" size="0.38 0.34 0.07" material="mat_sofa_grey" density="35" solimp="0.86 0.95 0.003" solref="0.08 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            <body name="sf_cushion_r_2" pos="0.39 0 0.40">
-                <joint name="sf_cushion_r_slide_2" type="slide" axis="0 0 1" range="-0.09 0" stiffness="5200" damping="160"/>
-                <geom name="sf_seat_r_2" type="box" pos="0 0 0" size="0.38 0.34 0.07" material="mat_sofa_grey" density="35" solimp="0.86 0.95 0.003" solref="0.08 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            <geom name="sf_back_2" type="box" pos="0 0.38 0.56" size="0.8 0.08 0.23" euler="-10 0 0" material="mat_sofa_grey" friction="0.9 0.01 0.0001" contype="0" conaffinity="0"/>
-            <geom name="sf_back_l_2" type="box" pos="-0.39 0.20 0.58" size="0.36 0.10 0.20" euler="-8 0 0" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-            <geom name="sf_back_r_2" type="box" pos=" 0.39 0.20 0.58" size="0.36 0.10 0.20" euler="-8 0 0" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-            <geom name="sf_arm_l_2" type="box" pos="-0.75 0 0.45" size="0.08 0.4 0.15" material="mat_sofa_grey"/>
-            <geom name="sf_arm_r_2" type="box" pos=" 0.75 0 0.45" size="0.08 0.4 0.15" material="mat_sofa_grey"/>
-            <geom name="sf_arm_l_pad_2" type="box" pos="-0.75 0 0.61" size="0.085 0.35 0.05" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-            <geom name="sf_arm_r_pad_2" type="box" pos=" 0.75 0 0.61" size="0.085 0.35 0.05" material="mat_sofa_grey" density="28" solimp="0.86 0.95 0.003" solref="0.09 1" friction="0.75 0.01 0.0001"/>
-        </body>
-
-        <!-- ARMCHAIR 1 (Terracotta) -->
-        <body name="armchair_1_2" pos="-1.1 -0.5 0" euler="0 0 115">
-            <geom name="ac1_leg_fl_2" type="capsule" pos="-0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac1_leg_fr_2" type="capsule" pos=" 0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac1_leg_bl_2" type="capsule" pos="-0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac1_leg_br_2" type="capsule" pos=" 0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac1_seat_2" type="box" pos="0 0 0.35" size="0.32 0.32 0.1" material="mat_armchair_terra" contype="0" conaffinity="0"/>
-            <body name="ac1_cushion_2" pos="0 0 0.43">
-                <joint name="ac1_cushion_slide_2" type="slide" axis="0 0 1" range="-0.06 0" stiffness="4200" damping="120"/>
-                <geom name="ac1_seat_cushion_2" type="box" size="0.30 0.30 0.07" material="mat_armchair_terra" density="35" solimp="0.86 0.95 0.003" solref="0.10 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            <geom name="ac1_back_2" type="box" pos="0 0.25 0.65" size="0.32 0.08 0.25" euler="-15 0 0" material="mat_armchair_terra"/>
-            <body name="ac1_arms_2">
-                 <geom name="ac1_arm_l_v_2" type="cylinder" fromto="-0.3 0.1 0.25 -0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac1_arm_l_h_2" type="box" pos="-0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-                 <geom name="ac1_arm_r_v_2" type="cylinder" fromto=" 0.3 0.1 0.25  0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac1_arm_r_h_2" type="box" pos=" 0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-            </body>
-        </body>
-
-        <!-- ARMCHAIR 2 (Terracotta) -->
-        <body name="armchair_2_2" pos="1.1 -0.5 0" euler="0 0 -115">
-            <geom name="ac2_leg_fl_2" type="capsule" pos="-0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac2_leg_fr_2" type="capsule" pos=" 0.27 -0.24 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac2_leg_bl_2" type="capsule" pos="-0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac2_leg_br_2" type="capsule" pos=" 0.27  0.28 0.125" size="0.025 0.125" material="mat_wood_dark"/>
-            <geom name="ac2_seat_2" type="box" pos="0 0 0.35" size="0.32 0.32 0.1" material="mat_armchair_terra" contype="0" conaffinity="0"/>
-            <body name="ac2_cushion_2" pos="0 0 0.43">
-                <joint name="ac2_cushion_slide_2" type="slide" axis="0 0 1" range="-0.06 0" stiffness="4200" damping="120"/>
-                <geom name="ac2_seat_cushion_2" type="box" size="0.30 0.30 0.07" material="mat_armchair_terra" density="35" solimp="0.86 0.95 0.003" solref="0.10 1" friction="0.75 0.01 0.0001"/>
-            </body>
-            <geom name="ac2_back_2" type="box" pos="0 0.25 0.65" size="0.32 0.08 0.25" euler="-15 0 0" material="mat_armchair_terra"/>
-            <body name="ac2_arms_2">
-                 <geom name="ac2_arm_l_v_2" type="cylinder" fromto="-0.3 0.1 0.25 -0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac2_arm_l_h_2" type="box" pos="-0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-                 <geom name="ac2_arm_r_v_2" type="cylinder" fromto=" 0.3 0.1 0.25  0.3 0.1 0.55" size="0.02" material="mat_wood_dark"/>
-                 <geom name="ac2_arm_r_h_2" type="box" pos=" 0.3 0 0.55" size="0.025 0.18 0.015" material="mat_wood_dark"/>
-            </body>
-        </body>
-    </body>
 
     <!-- ================= LONG TABLE SET (Left Center) -> Moved to Window Side ================= -->
     <!-- Left Window Table -->
@@ -1498,11 +1327,18 @@
       </body>
     </body>
 
-    <body name="bar_cup_saucer_1" pos="-1.8 3.55 1.1" euler="0 0 20">
-      <geom name="cup1_saucer" type="cylinder" size="0.075 0.006" pos="0 0 0.006" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
-      <geom name="cup1_cup_outer" type="cylinder" size="0.035 0.03" pos="0 0 0.042" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
-      <geom name="cup1_cup_lip" type="cylinder" size="0.037 0.004" pos="0 0 0.072" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
-      <geom name="cup1_handle" type="capsule" size="0.006 0.02" pos="0.045 0 0.05" euler="0 0 90" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+    <body name="bar_cup_saucer_1" pos="-1.8 3.55 1.102" euler="0 0 20">
+      <geom name="cup1_saucer" type="ellipsoid" size="0.085 0.085 0.008" pos="0 0 0.008" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_saucer_rim" type="ellipsoid" size="0.092 0.092 0.004" pos="0 0 0.011" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+
+      <geom name="cup1_cup_base" type="ellipsoid" size="0.018 0.018 0.010" pos="0 0 0.020" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_cup_belly" type="ellipsoid" size="0.038 0.038 0.032" pos="0 0 0.046" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_cup_upper" type="ellipsoid" size="0.040 0.040 0.018" pos="0 0 0.062" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_cup_rim" type="ellipsoid" size="0.043 0.043 0.004" pos="0 0 0.074" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+
+      <geom name="cup1_handle_seg1" type="capsule" size="0.005 0.015" fromto="0.040 0.016 0.060  0.055 0.016 0.050" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_handle_seg2" type="capsule" size="0.005 0.015" fromto="0.040 -0.016 0.060  0.055 -0.016 0.050" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
+      <geom name="cup1_handle_seg3" type="capsule" size="0.005 0.018" fromto="0.058 0.014 0.052  0.058 -0.014 0.052" material="mat_lt_ceramic" contype="0" conaffinity="0"/>
     </body>
 
     <body name="tool_cabinet_wall_1" pos="-3.2 5.61 0" euler="0 0 180">
@@ -1816,6 +1652,127 @@
       <site name="s_cliff_l" pos="0.1 0.15 0.02" zaxis="0 0 -1" size="0.005" rgba="0 0 1 1"/>
       <site name="s_cliff_r" pos="0.1 -0.15 0.02" zaxis="0 0 -1" size="0.005" rgba="0 0 1 1"/>
     </body>
+    <!-- Seating Module Group -->
+    <body name="seating_module" pos="2.5 -2.0 0">
+      
+      <!-- Sofa 1 (Left) -->
+      <body name="sofa_left" pos="-1.0 0 0" euler="0 0 0">
+        <!-- Wood Base -->
+        <geom name="sl_base" type="box" pos="0 0 0.15" size="0.35 0.75 0.15" material="mat_wood_light"/>
+        <!-- Back Support -->
+        <geom name="sl_back_support" type="box" pos="-0.3 0 0.4" size="0.05 0.75 0.4" material="mat_wood_light"/>
+        <!-- Seat Cushion -->
+        <geom name="sl_seat" type="box" pos="0 0 0.35" size="0.32 0.7 0.05" material="mat_cushion_white"/>
+        <!-- Back Cushion -->
+        <geom name="sl_back" type="box" pos="-0.25 0 0.55" size="0.05 0.7 0.2" material="mat_cushion_white"/>
+        
+        <!-- Flower Pillow Decoration -->
+        <body name="flower_pillow" pos="0 0 0.45" euler="0 -20 0">
+            <geom name="fp_center" type="ellipsoid" size="0.06 0.06 0.03" material="mat_flower_center"/>
+            <!-- Petals -->
+            <geom name="fp_p1" type="ellipsoid" pos="0.08 0 0" size="0.04 0.03 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p2" type="ellipsoid" pos="-0.08 0 0" size="0.04 0.03 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p3" type="ellipsoid" pos="0 0.08 0" size="0.03 0.04 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p4" type="ellipsoid" pos="0 -0.08 0" size="0.03 0.04 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p5" type="ellipsoid" pos="0.06 0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p6" type="ellipsoid" pos="0.06 -0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p7" type="ellipsoid" pos="-0.06 0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p8" type="ellipsoid" pos="-0.06 -0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+        </body>
+      </body>
+
+      <!-- Planter Box (Behind Left Sofa) -->
+      <body name="planter_box" pos="-1.5 0 0">
+         <geom name="pb_box" type="box" pos="0 0 0.2" size="0.15 0.75 0.2" material="mat_wood_light"/>
+         <!-- Plants removed -->
+         <geom name="pb_soil" type="box" pos="0 0 0.38" size="0.12 0.72 0.02" rgba="0.3 0.2 0.1 1"/>
+      </body>
+
+      <!-- Table (Center) -->
+      <body name="table_center" pos="0 0 0">
+        <geom name="tc_top" type="box" pos="0 0 0.6" size="0.35 0.6 0.02" material="mat_wood_light"/>
+        <geom name="tc_leg1" type="box" pos="-0.25 -0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <geom name="tc_leg2" type="box" pos="0.25 -0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <geom name="tc_leg3" type="box" pos="-0.25 0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <geom name="tc_leg4" type="box" pos="0.25 0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <!-- Central support beam if needed -->
+        <geom name="tc_beam" type="box" pos="0 0 0.55" size="0.02 0.5 0.02" material="mat_wood_light"/>
+      </body>
+
+      <!-- Sofa 2 (Right) -->
+      <body name="sofa_right" pos="1.0 0 0" euler="0 0 180">
+        <!-- Wood Base -->
+        <geom name="sr_base" type="box" pos="0 0 0.15" size="0.35 0.75 0.15" material="mat_wood_light"/>
+        <!-- Back Support -->
+        <geom name="sr_back_support" type="box" pos="-0.3 0 0.4" size="0.05 0.75 0.4" material="mat_wood_light"/>
+        <!-- Seat Cushion -->
+        <geom name="sr_seat" type="box" pos="0 0 0.35" size="0.32 0.7 0.05" material="mat_cushion_white"/>
+        <!-- Back Cushion -->
+        <geom name="sr_back" type="box" pos="-0.25 0 0.55" size="0.05 0.7 0.2" material="mat_cushion_white"/>
+      </body>
+
+    </body>
+
+    <!-- Seating Module 2 (Upper) -->
+    <body name="seating_module_2" pos="2.5 1.5 0">
+      
+      <!-- Sofa 1 (Left) -->
+      <body name="sofa_left_2" pos="-1.0 0 0" euler="0 0 0">
+        <!-- Wood Base -->
+        <geom name="sl_base_2" type="box" pos="0 0 0.15" size="0.35 0.75 0.15" material="mat_wood_light"/>
+        <!-- Back Support -->
+        <geom name="sl_back_support_2" type="box" pos="-0.3 0 0.4" size="0.05 0.75 0.4" material="mat_wood_light"/>
+        <!-- Seat Cushion -->
+        <geom name="sl_seat_2" type="box" pos="0 0 0.35" size="0.32 0.7 0.05" material="mat_cushion_white"/>
+        <!-- Back Cushion -->
+        <geom name="sl_back_2" type="box" pos="-0.25 0 0.55" size="0.05 0.7 0.2" material="mat_cushion_white"/>
+        
+        <!-- Flower Pillow Decoration -->
+        <body name="flower_pillow_2" pos="0 0 0.45" euler="0 -20 0">
+            <geom name="fp_center_2" type="ellipsoid" size="0.06 0.06 0.03" material="mat_flower_center"/>
+            <!-- Petals -->
+            <geom name="fp_p1_2" type="ellipsoid" pos="0.08 0 0" size="0.04 0.03 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p2_2" type="ellipsoid" pos="-0.08 0 0" size="0.04 0.03 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p3_2" type="ellipsoid" pos="0 0.08 0" size="0.03 0.04 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p4_2" type="ellipsoid" pos="0 -0.08 0" size="0.03 0.04 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p5_2" type="ellipsoid" pos="0.06 0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p6_2" type="ellipsoid" pos="0.06 -0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p7_2" type="ellipsoid" pos="-0.06 0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+            <geom name="fp_p8_2" type="ellipsoid" pos="-0.06 -0.06 0" size="0.035 0.035 0.01" material="mat_flower_petal"/>
+        </body>
+      </body>
+
+      <!-- Planter Box (Behind Left Sofa) -->
+      <body name="planter_box_2" pos="-1.5 0 0">
+         <geom name="pb_box_2" type="box" pos="0 0 0.2" size="0.15 0.75 0.2" material="mat_wood_light"/>
+         <!-- Plants removed -->
+         <geom name="pb_soil_2" type="box" pos="0 0 0.38" size="0.12 0.72 0.02" rgba="0.3 0.2 0.1 1"/>
+      </body>
+
+      <!-- Table (Center) -->
+      <body name="table_center_2" pos="0 0 0">
+        <geom name="tc_top_2" type="box" pos="0 0 0.6" size="0.35 0.6 0.02" material="mat_wood_light"/>
+        <geom name="tc_leg1_2" type="box" pos="-0.25 -0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <geom name="tc_leg2_2" type="box" pos="0.25 -0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <geom name="tc_leg3_2" type="box" pos="-0.25 0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <geom name="tc_leg4_2" type="box" pos="0.25 0.5 0.3" size="0.02 0.02 0.3" material="mat_wood_light"/>
+        <!-- Central support beam if needed -->
+        <geom name="tc_beam_2" type="box" pos="0 0 0.55" size="0.02 0.5 0.02" material="mat_wood_light"/>
+      </body>
+
+      <!-- Sofa 2 (Right) -->
+      <body name="sofa_right_2" pos="1.0 0 0" euler="0 0 180">
+        <!-- Wood Base -->
+        <geom name="sr_base_2" type="box" pos="0 0 0.15" size="0.35 0.75 0.15" material="mat_wood_light"/>
+        <!-- Back Support -->
+        <geom name="sr_back_support_2" type="box" pos="-0.3 0 0.4" size="0.05 0.75 0.4" material="mat_wood_light"/>
+        <!-- Seat Cushion -->
+        <geom name="sr_seat_2" type="box" pos="0 0 0.35" size="0.32 0.7 0.05" material="mat_cushion_white"/>
+        <!-- Back Cushion -->
+        <geom name="sr_back_2" type="box" pos="-0.25 0 0.55" size="0.05 0.7 0.2" material="mat_cushion_white"/>
+      </body>
+
+    </body>
   </worldbody>
 
   <equality>
@@ -1825,10 +1782,6 @@
   <contact>
       <exclude body1="door_left" body2="door_right"/>
       <exclude body1="link0" body2="link1"/>
-      <exclude body1="sofa_grey" body2="sf_cushion_l"/>
-      <exclude body1="sofa_grey" body2="sf_cushion_r"/>
-      <exclude body1="sofa_grey_2" body2="sf_cushion_l_2"/>
-      <exclude body1="sofa_grey_2" body2="sf_cushion_r_2"/>
   </contact>
 
   <actuator>

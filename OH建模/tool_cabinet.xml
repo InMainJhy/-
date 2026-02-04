@@ -25,6 +25,9 @@
     <!-- 2. Door Processing: Moderate saturation blue (RGB 0 100 200 -> 0 0.39 0.78) -->
     <material name="door_blue" rgba="0.0 0.392 0.784 1" shininess="0.6" specular="0.7" reflectance="0.3"/>
 
+    <material name="wood_light" rgba="0.78 0.65 0.45 1" shininess="0.15" specular="0.2" reflectance="0.1"/>
+    <material name="wood_dark" rgba="0.66 0.52 0.33 1" shininess="0.2" specular="0.25" reflectance="0.12"/>
+
     <material name="glass" rgba="0.8 0.9 1 0.3" shininess="0.9" specular="0.9" reflectance="0.2"/>
     <material name="glass_blue" rgba="0.0 0.392 0.784 0.5" shininess="0.9" specular="0.9" reflectance="0.4"/>
     
@@ -41,47 +44,47 @@
     
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" pos="0 0 0"/>
 
-    <!-- Cabinet Body (Silver) -->
+    <!-- Cabinet Body (Wood) -->
     <body name="cabinet" pos="0 0 0">
       <!-- Back Wall -->
-      <geom name="back_wall" size="0.5 0.02 0.9" pos="0 -0.25 0.9" material="silver_metal"/>
+      <geom name="back_wall" size="0.5 0.02 0.9" pos="0 -0.25 0.9" material="wood_light"/>
       <!-- Left Wall -->
-      <geom name="left_wall" size="0.02 0.25 0.9" pos="-0.48 0 0.9" material="silver_metal"/>
+      <geom name="left_wall" size="0.02 0.25 0.9" pos="-0.48 0 0.9" material="wood_light"/>
       <!-- Right Wall -->
-      <geom name="right_wall" size="0.02 0.25 0.9" pos="0.48 0 0.9" material="silver_metal"/>
+      <geom name="right_wall" size="0.02 0.25 0.9" pos="0.48 0 0.9" material="wood_light"/>
       <!-- Top -->
-      <geom name="top" size="0.5 0.27 0.02" pos="0 0 1.82" material="silver_metal"/>
+      <geom name="top" size="0.5 0.27 0.02" pos="0 0 1.82" material="wood_light"/>
       <!-- Bottom -->
-      <geom name="bottom" size="0.5 0.27 0.02" pos="0 0 0.02" material="silver_metal"/>
+      <geom name="bottom" size="0.5 0.27 0.02" pos="0 0 0.02" material="wood_light"/>
 
       <!-- Shelves -->
-      <geom name="shelf_1" size="0.46 0.23 0.01" pos="0 0 0.4" material="silver_metal"/>
-      <geom name="shelf_2" size="0.46 0.23 0.01" pos="0 0 0.8" material="silver_metal"/>
-      <geom name="shelf_3" size="0.46 0.23 0.01" pos="0 0 1.2" material="silver_metal"/>
-      <geom name="shelf_4" size="0.46 0.23 0.01" pos="0 0 1.55" material="silver_metal"/>
+      <geom name="shelf_1" size="0.46 0.23 0.01" pos="0 0 0.4" material="wood_light"/>
+      <geom name="shelf_2" size="0.46 0.23 0.01" pos="0 0 0.8" material="wood_light"/>
+      <geom name="shelf_3" size="0.46 0.23 0.01" pos="0 0 1.2" material="wood_light"/>
+      <geom name="shelf_4" size="0.46 0.23 0.01" pos="0 0 1.55" material="wood_light"/>
 
-      <!-- Left Door (Blue) -->
+      <!-- Left Door (Wood) -->
       <body name="left_door" pos="-0.48 0.25 0.9">
         <joint name="left_hinge" axis="0 0 1" pos="0 0 0" range="0 135"/>
         <!-- Frame - Using door_blue -->
-        <geom name="ld_left_frame" size="0.04 0.02 0.9" pos="0.04 0 0" material="door_blue"/> 
-        <geom name="ld_right_frame" size="0.04 0.02 0.9" pos="0.46 0 0" material="door_blue"/>
-        <geom name="ld_top_frame" size="0.25 0.02 0.04" pos="0.25 0 0.86" material="door_blue"/>
-        <geom name="ld_bottom_frame" size="0.25 0.02 0.04" pos="0.25 0 -0.86" material="door_blue"/>
+        <geom name="ld_left_frame" size="0.04 0.02 0.9" pos="0.04 0 0" material="wood_dark"/> 
+        <geom name="ld_right_frame" size="0.04 0.02 0.9" pos="0.46 0 0" material="wood_dark"/>
+        <geom name="ld_top_frame" size="0.25 0.02 0.04" pos="0.25 0 0.86" material="wood_dark"/>
+        <geom name="ld_bottom_frame" size="0.25 0.02 0.04" pos="0.25 0 -0.86" material="wood_dark"/>
         <!-- Glass -->
         <geom name="ld_glass" type="box" size="0.2 0.005 0.82" pos="0.25 0 0" material="glass_blue"/>
         <!-- Handle -->
         <geom name="ld_handle" type="box" size="0.01 0.03 0.05" pos="0.44 0.05 0" material="handle_metal"/>
       </body>
 
-      <!-- Right Door (Blue) -->
+      <!-- Right Door (Wood) -->
       <body name="right_door" pos="0.48 0.25 0.9">
         <joint name="right_hinge" axis="0 0 1" pos="0 0 0" range="-135 0"/>
         <!-- Frame - Using door_blue -->
-        <geom name="rd_right_frame" size="0.04 0.02 0.9" pos="-0.04 0 0" material="door_blue"/>
-        <geom name="rd_left_frame" size="0.04 0.02 0.9" pos="-0.46 0 0" material="door_blue"/>
-        <geom name="rd_top_frame" size="0.25 0.02 0.04" pos="-0.25 0 0.86" material="door_blue"/>
-        <geom name="rd_bottom_frame" size="0.25 0.02 0.04" pos="-0.25 0 -0.86" material="door_blue"/>
+        <geom name="rd_right_frame" size="0.04 0.02 0.9" pos="-0.04 0 0" material="wood_dark"/>
+        <geom name="rd_left_frame" size="0.04 0.02 0.9" pos="-0.46 0 0" material="wood_dark"/>
+        <geom name="rd_top_frame" size="0.25 0.02 0.04" pos="-0.25 0 0.86" material="wood_dark"/>
+        <geom name="rd_bottom_frame" size="0.25 0.02 0.04" pos="-0.25 0 -0.86" material="wood_dark"/>
         <!-- Glass -->
         <geom name="rd_glass" type="box" size="0.2 0.005 0.82" pos="-0.25 0 0" material="glass_blue"/>
         <!-- Handle -->
